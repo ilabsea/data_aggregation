@@ -4,13 +4,13 @@
 	class File extends CI_Controller {
 
 	    function upload() {
-	    	print_r($_FILES);
-	  //       $info = pathinfo($_FILES['userFile']['name']);
-			// $ext = $info['extension']; // get the extension of the file
-			// $newname = "newname.".$ext; 
-			// $target = '../uploads/'.$newname;
-			// $path = move_uploaded_file( $_FILES['userFile']['tmp_name'], $target);
-			// post_request_to_import(import_url(), array("filename" => $newname));
+	        $info = pathinfo($_FILES['file']['tmp_name']);
+	        print_r($info);
+			$name = $info['filename']; // get the extension of the file
+			$newname = $name.".sql"; 
+			$target = '../uploads/'.$newname;
+			$path = move_uploaded_file( $_FILES['file']['tmp_name'], $target);
+			$this->post_request_to_import($this->config->item('import_url'), array("filename" => $newname));
 	    }
 
 	    function post_request_to_import($url, $data){

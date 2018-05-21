@@ -15,19 +15,20 @@ jQuery(function () {
             processData: false,
             contentType: false,
             success: function (result) {
-                conosle.log("Success");
+                console.log("Success");
                  // if all is well
                  // play the audio file
             }
         });
-        console.log(files)
     }
 
     uploadForm.addEventListener('submit', function(e) {
-        var uploadFiles = document.getElementById('js-upload-files').files;
-        e.preventDefault()
+        var file_data = $('#js-upload-files').prop('files')[0];   
+        var form_data = new FormData();                  
+        form_data.append('file', file_data);
+        e.preventDefault();
 
-        startUpload(uploadFiles)
+        startUpload(form_data);
     })
 
     dropZone.ondrop = function(e) {

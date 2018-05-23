@@ -10,7 +10,9 @@
 			$newname = $name.".sql"; 
 			$target = '../uploads/'.$newname;
 			$path = move_uploaded_file( $_FILES['file']['tmp_name'], $target);
-			$this->post_request_to_import($this->config->item('import_url'), array("filename" => $newname));
+			$validate_sever_url = $this->config->item('import_url')."/".$newname;
+			$response = $this->post_request_to_import($validate_sever_url, array("filename" => $newname));
+			echo($response);
 	    }
 
 	    function post_request_to_import($url, $data){

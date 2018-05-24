@@ -1,5 +1,6 @@
-<?php $this->load->view('header') ?>
 
+<?php $this->load->view('header') ?>
+<script src="<?php echo base_url();?>assets/js/script.js"></script>
   <div class="navbar">
     <div class="navbar-inner">
       <div class="container-fluid">
@@ -38,43 +39,43 @@
   <!--/.navbar -->
 
   <div class="container">
-    <div class="panel panel-default">
-        <div class="panel-heading"><small>Upload Attachments</small></div>
-        <div class="panel-body">
-
-          <!-- Standar Form -->
-          <h4>Please upload the files</h4>
-          <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
-            <div class="form-inline">
-              <div class="form-group">
-                <input type="file" name="files[]" id="js-upload-files" multiple>
-              </div>
-              <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button>
+    <div class="stepwizard">
+        <div class="stepwizard-row">
+            <div class="stepwizard-step">
+                <button type="button" class="btn btn-primary btn-circle">1</button>
+                <p>Upload File</p>
             </div>
-          </form>
-
-          <!-- Drop Zone -->
-          <h4>Or you can drag them directly to the next box</h4></h4>
-          <div class="upload-drop-zone" id="drop-zone">
-            Please place them inside the box
-          </div>
-
-          <!-- Progress Bar -->
-          <div class="progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-              <span class="sr-only">0% Complete</span>
+            <div class="stepwizard-step">
+                <button type="button" class="btn btn-disabled btn-circle">2</button>
+                <p>Validation</p>
             </div>
-          </div>
-
-          <!-- Upload Finished -->
-          <div class="js-upload-finished">
-            <h3>Uploaded files</h3>
-            <div class="list-group">
-              <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>Anexo I.docx</a>
-              <a href="#" class="list-group-item list-group-item-success"><span class="badge alert-success pull-right">Success</span>Anexo II.docx</a>
-            </div>
-          </div>
+            <div class="stepwizard-step">
+                <button type="button" class="btn btn-disabled btn-circle" disabled="disabled">3</button>
+                <p>Import</p>
+            </div> 
         </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <small>
+          Upload Attachments
+        </small>
       </div>
+      <div class="panel-body">
+
+        <!-- Standar Form -->
+        <h4>Please upload the files</h4>
+        <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
+          <div class="form-inline">
+            <div class="form-group">
+              <input type="file" name="files[]" id="js-upload-files" multiple>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
+
+    
 <?php $this->load->view('footer') ?>

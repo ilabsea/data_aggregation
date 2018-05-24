@@ -20,40 +20,32 @@ class Main extends CI_Controller{
   function show_main() {
     $this->load->model('postrequest');
 
-    // Get some data from the user's session
     $user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
-    $team_id = $this->session->userdata('teamId');
-
-    // Load all of the logged-in user's posts
-    $posts = $this->postrequest->get_posts_for_user( $user_id, 5 );
-
-    // If posts were fetched from the database, assign them to $data
-    // so they can be passed into the view.
-    if ($posts) {
-      $data['posts'] = $posts;
-    }
-
-    // Load posts based on the user's permission. Admins can see
-    // everything, and regular users can only see posts from
-    // their own team.
-    $other_users_posts = $this->postrequest->get_all_other_posts( $user_id, $team_id, $is_admin );
-    if( $other_users_posts ) {
-      $data['other_posts'] = $other_users_posts;
-    }
 
     $data['is_admin'] = $is_admin;
-    $data['max_posts'] = $posts ? count($posts) : 0;
-    $data['post_count'] = $this->postrequest->get_post_count_for_user( $user_id );
     $data['email'] = $this->session->userdata('email');
     $data['name'] = $this->session->userdata('name');
-    $data['avatar'] = $this->session->userdata('avatar');
-    $data['tagline'] = $this->session->userdata('tagline');
-    $data['teamId'] = $this->session->userdata('teamId');
+
 
     $this->load->view('main',$data);
   }
 
+  function show_validation($file_name){
+    $user_id = $this->session->userdata('id');
+    $is_admin = $this->session->userdata('isAdmin');
+
+    $data['is_admin'] = $is_admin;
+    $data['email'] = $this->session->userdata('email');
+    $data['name'] = $this->session->userdata('name');
+    $validation_path = $this->config->item('import_url')."/".$file_name;
+    $info_path = $this->config->item('info_url');
+    $response = $this->httpPost($validation_path, array("file_name" => $file_name));
+    $data["response"] = json_decode($response, true);
+    $info_data = $this->httpPost($validation_path, array());
+    $data["record_info"] = json_decode($info_data, true);
+    $this->load->view('validation',$data);
+  }
   
   function create_new_user() {
     $userInfo = $this->input->post(null,true);
@@ -81,6 +73,16 @@ class Main extends CI_Controller{
       $this->session->set_userdata(array('tagline'=>$new_tagline));
       echo "success";
     }
+  }
+
+  public function httpPost($url, $data){
+      $curl = curl_init($url);
+      curl_setopt($curl, CURLOPT_POST, true);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+      $response = curl_exec($curl);
+      curl_close($curl);
+      return $response;
   }
 
 }

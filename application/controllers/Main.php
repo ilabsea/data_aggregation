@@ -35,6 +35,7 @@ class Main extends CI_Controller{
     $user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
 
+    $data["file_name"] = $file_name;
     $data['is_admin'] = $is_admin;
     $data['email'] = $this->session->userdata('email');
     $data['name'] = $this->session->userdata('name');
@@ -42,9 +43,24 @@ class Main extends CI_Controller{
     $info_path = $this->config->item('info_url');
     $response = $this->httpPost($validation_path, array("file_name" => $file_name));
     $data["response"] = json_decode($response, true);
-    $info_data = $this->httpPost($validation_path, array());
+    $info_data = $this->httpPost($info_path, array());
     $data["record_info"] = json_decode($info_data, true);
     $this->load->view('validation',$data);
+
+  }
+
+  function show_import($file_name){
+    $excluded_case_ids = $_POST["excluded_case_ids"];
+    $user_id = $this->session->userdata('id');
+    $is_admin = $this->session->userdata('isAdmin');
+    $data['is_admin'] = $is_admin;
+    $data['email'] = $this->session->userdata('email');
+    $data['name'] = $this->session->userdata('name');
+    $info_path = $this->config->item('info_url');
+    $info_data = $this->httpPost($info_path, array("excluded_case_ids" => $excluded_case_ids));
+    $data["record_info"] = json_decode($info_data, true);
+    $this->load->view('import',$data);
+
   }
   
   function create_new_user() {

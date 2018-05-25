@@ -55,28 +55,34 @@
             </div> 
         </div>
     </div>
+    <?php $excluded_case_ids = array(); ?>
     <?php if(count($response) > 0){ ?>
       * There are some validation errors that block the application todo import. Please fix the following error and reupload again to do import.
       <br /><br />
       <div class="row">
         <div class="col-md-12">
             <ol class="tree-structure">
-              <?php $i = 1; ?>
+              <?php 
+                $i = 1;    
+              ?>
               <?php foreach ($response as $case_id => $list) { ?>
                 <li>
-                   <span class="num">1</span>
-                   <a href="#"> Case ID <?php echo $case_id; ?> </a>
-                   <ol>
-                      <?php $j = 1; ?>
-                      <?php foreach ($list as $key => $value) { ?>
-                        <li>
-                           <span class="num"><?php echo (string)$i.".".(string)$j; ?></span>
-                           <a href="#"><?php echo $value; ?></a>
-                           <?php $j = $j + 1; ?>
-                        </li>
-                      <?php } ?>
-                      <?php $i = $i + 1; ?>
-                   </ol>
+                  <span class="num">1</span>
+                  <?php 
+                    array_push($excluded_case_ids, $case_id);
+                  ?>
+                  <a href="#"> Case ID <?php echo $case_id; ?> </a>
+                  <ol>
+                    <?php $j = 1; ?>
+                    <?php foreach ($list as $key => $value) { ?>
+                      <li>
+                        <span class="num"><?php echo (string)$i.".".(string)$j; ?></span>
+                        <a href="#"><?php echo $value; ?></a>
+                        <?php $j = $j + 1; ?>
+                      </li>
+                    <?php } ?>
+                    <?php $i = $i + 1; ?>
+                  </ol>
                 </li>
               <?php } ?>
             </ol>
@@ -87,14 +93,15 @@
     else {
     ?>
       Import file is ready to do import.
-      Summary record going to import to the system.
-      Total Record : 
+      Summary record going to import to the system.<br />
+      Total Record : <?php echo $record_info["total"]; ?>
       <br /><br />
       <div class="row">
         <div class="col-md-12">
             <ol class="tree-structure">
               <?php $i = 1; ?>
               <?php foreach ($record_info as $table_name => $list) { ?>
+                <?php if($table_name != "total") { ?>
                 <li>
                    <span class="num"><?php echo $i; ?></span>
                    <a href="#">  <?php echo $table_name; ?> </a>
@@ -108,11 +115,19 @@
                       <?php $i = $i + 1; ?>
                    </ol>
                 </li>
-              <?php } ?>
+              <?php }} ?>
             </ol>
         </div>
       </div>
     <?php } ?>
+    <form action="../show_import/<?php echo $file_name; ?>" method="post" enctype="multipart/form-data" id="js-upload-form">
+      <div class="form-inline">
+        <div class="form-group">
+          <input type="hidden" name="excluded_case_ids" id="excluded_case_ids" value="<?php echo join(',', $excluded_case_ids) ?>">
+        </div>
+        <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Proceed to Upload</button>
+      </div>
+    </form>
   </div>
 
 <?php $this->load->view('footer') ?>

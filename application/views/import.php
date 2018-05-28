@@ -46,8 +46,10 @@
                 </a>
             </div>
             <div class="stepwizard-step">
-                <button type="button" class="btn btn-disabled btn-circle">2</button>
-                <p>Validation</p>
+                <a class="brand" href="../show_validation/<?php echo $file_name ?>" name="top">
+                  <button type="button" class="btn btn-disabled btn-circle">2</button>
+                  <p>Validation</p>
+                </a>
             </div>
             <div class="stepwizard-step">
                 <button type="button" class="btn btn-primary btn-circle" disabled="disabled">3</button>
@@ -73,7 +75,8 @@
                     <?php $j = 1; ?>
                     <li>
                        <span class="num"><?php echo (string)$i.".".(string)$j; ?></span>
-                       <a href="#">Total record : <?php echo $list[0]["total"]; ?></a>
+                       <a href="#" style="padding-top:5px;">Total record : <?php echo $list[0]["total"]; ?></a>
+                       <img src="../../../assets/img/waiting.png" id="<?php echo $table_name; ?>" width="16"/>
                        <?php $j = $j + 1; ?>
                     </li>
                     <?php $i = $i + 1; ?>
@@ -87,6 +90,40 @@
 
   <script>
 
+    var table_list = [];
+    <?php
+        foreach ($record_info as $table_name => $table_properties)
+        {
+          if($table_name != "total") {
+    ?>
+    table_list.push("<?php echo $table_name; ?>");
+    <?php
+       }}
+    ?>
+
+    
+    var startUpload = function(index, file_name, table_name, max_size) {
+      if(index <= max_size)
+        jQuery.ajax({
+            url: "<?php echo $this->config->item('import_app'); ?>import/import_data/" + table_name + "/" + file_name,
+            type: "POST",
+            data: {"excluded_case_ids" : []},
+            processData: false,
+            contentType: false,
+            start: function(){
+              $("#" + table_name).attr("src", "../../../assets/img/loading.gif")
+            },
+            success: function (result) {
+                $("#" + table_name).attr("src", "../../../assets/img/check.png")
+                var next_index = index + 1;
+                startUpload(index+1, file_name, table_list[next_index], max_size);
+            }
+        });
+    };
+
+    var i =0;
+    var max_size = table_list.length - 1;
+    startUpload(i, "<?php echo $file_name; ?>", table_list[i], max_size);
 
   </script>
 <?php $this->load->view('footer') ?>

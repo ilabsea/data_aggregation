@@ -53,6 +53,7 @@ class Main extends CI_Controller{
     $excluded_case_ids = $_POST["excluded_case_ids"];
     $user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
+    $data["file_name"] = $file_name;
     $data['is_admin'] = $is_admin;
     $data['email'] = $this->session->userdata('email');
     $data['name'] = $this->session->userdata('name');

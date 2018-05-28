@@ -26,6 +26,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $config['base_url'] = 'http://127.0.0.1/data_aggregation/';
 $config['import_url'] = 'http://127.0.0.1/data_import/index.php/import/process';
 $config['info_url'] = 'http://127.0.0.1/data_import/index.php/import/upload_info';
+$config['import_app'] = 'http://127.0.0.1/data_import/index.php/';
 /*
 |--------------------------------------------------------------------------
 | Index File

@@ -6,7 +6,7 @@
           <ul class="nav">
             <li><a href="#"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
+            <li class="active"><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
               <a href="#" style="padding:10px;">
@@ -40,7 +40,7 @@
     <div class="stepwizard">
         <div class="stepwizard-row">
             <div class="stepwizard-step">
-                <a class="brand" href="../show_main" name="top">
+                <a class="brand" href="../show_upload" name="top">
                   <button type="button" class="btn btn-disabled btn-circle">1</button>
                   <p>Upload File</p>
                 </a>

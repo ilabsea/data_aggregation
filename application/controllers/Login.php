@@ -5,7 +5,7 @@ class Login extends CI_Controller {
 
     function index() {
         if( $this->session->userdata('isLoggedIn') ) {
-            redirect('/main/show_main');
+            redirect('/dashboard/show_dashboard');
         } else {
             $this->show_login(false);
         }
@@ -22,7 +22,7 @@ class Login extends CI_Controller {
         //Ensure values exist for email and pass, and validate the user's credentials
         if( $email && $pass && $this->user->validate_user($email,$pass)) {
             // If the user is valid, redirect to the main view
-            redirect('/main/show_main');
+            redirect('/import/show_upload');
         } else {
             // Otherwise show the login screen with an error message.
             $this->show_login(true);

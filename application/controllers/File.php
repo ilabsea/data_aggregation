@@ -12,6 +12,12 @@
 			echo($newname);
 	    }
 
+	    function remove($file_name){
+			$target = '../uploads/'.$file_name;
+			unlink($target);
+			echo($target);
+	    }
+
 	    function validation($url){
 	    	$this->load->view("validation");
 	    }

@@ -6,7 +6,7 @@
           <ul class="nav">
             <li><a href="#"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
+            <li class="active"><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
               <a href="#" style="padding:10px;">
@@ -40,7 +40,7 @@
     <div class="stepwizard">
         <div class="stepwizard-row">
             <div class="stepwizard-step">
-                <a class="brand" href="../show_main" name="top">
+                <a class="brand" href="../show_upload" name="top">
                   <button type="button" class="btn btn-disabled btn-circle">1</button>
                   <p>Upload File</p>
                 </a>
@@ -86,6 +86,17 @@
           </ol>
       </div>
     </div>
+    <center>
+      <div class="row text-center" id="success-div" style="display: none;">
+        <div class="col-sm-6 col-sm-offset-3">
+          <br><br> <h2 style="color:#0fad00" id="lblSuccess">Success</h2>
+          <p style="font-size:20px;color:#5C5C5C;">System successfully import all of your data into the system.</p>
+          <a href="../../dashboard/show_dashboard" class="btn btn-success">     Go to Dashboard      </a>
+          <br><br>
+          </div>
+      </div>
+    </center>
+    
   </div>
 
   <script>
@@ -101,15 +112,23 @@
        }}
     ?>
 
-    
+    var ignor_list = [];
+    <?php
+        foreach ($response_data as $case_id => $list)
+        {
+    ?>
+      ignor_list.push("<?php echo $case_id; ?>");
+    <?php
+       }
+    ?>
     var startUpload = function(index, file_name, table_name, max_size) {
       if(index <= max_size)
         jQuery.ajax({
             url: "<?php echo $this->config->item('import_app'); ?>import/import_data/" + table_name + "/" + file_name,
             type: "POST",
-            data: {"excluded_case_ids" : []},
+            data: JSON.stringify({excluded_case_ids : ignor_list}),
             processData: false,
-            contentType: false,
+            contentType: 'application/json',
             start: function(){
               $("#" + table_name).attr("src", "../../../assets/img/loading.gif")
             },
@@ -119,6 +138,21 @@
                 startUpload(index+1, file_name, table_list[next_index], max_size);
             }
         });
+      else
+        removeUploadFile(file_name);
+    };
+
+    var removeUploadFile = function(file_name) {
+      jQuery.ajax({
+          url: "../../../index.php/file/remove/" + file_name,
+          type: "POST",
+          processData: false,
+          contentType: 'application/json',
+          success: function (result) {
+            $("#success-div")[0].style.display = "block";
+            window.location.hash = '#lblSuccess';
+          }
+      });
     };
 
     var i =0;

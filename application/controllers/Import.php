@@ -1,7 +1,7 @@
 <?php
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Main extends CI_Controller{
+class Import extends CI_Controller{
 
   public function __construct()
   {
@@ -17,24 +17,20 @@ class Main extends CI_Controller{
    * After a user logs in, show_main() is called and the main
    * application screen is set up.
    */
-  function show_main() {
-    $this->load->model('postrequest');
-
+  function show_upload() {
     $user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
-
     $data['is_admin'] = $is_admin;
     $data['email'] = $this->session->userdata('email');
     $data['name'] = $this->session->userdata('name');
-
-
-    $this->load->view('main',$data);
+    $this->load->view('upload',$data);
   }
 
   function show_validation($file_name){
+    if(!file_exists("../uploads/".$file_name))
+      header("HTTP/1.1 404 File Not Found");
     $user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
-
     $data["file_name"] = $file_name;
     $data['is_admin'] = $is_admin;
     $data['email'] = $this->session->userdata('email');
@@ -53,6 +49,7 @@ class Main extends CI_Controller{
     $excluded_case_ids = $_POST["excluded_case_ids"];
     $user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
+    $validation_path = $this->config->item('import_url')."/".$file_name;
     $data["file_name"] = $file_name;
     $data['is_admin'] = $is_admin;
     $data['email'] = $this->session->userdata('email');
@@ -60,6 +57,8 @@ class Main extends CI_Controller{
     $info_path = $this->config->item('info_url');
     $info_data = $this->httpPost($info_path, array("excluded_case_ids" => $excluded_case_ids));
     $data["record_info"] = json_decode($info_data, true);
+    $response = $this->httpPost($validation_path, array("file_name" => $file_name));
+    $data["response_data"] = json_decode($response, true);
     $this->load->view('import',$data);
 
   }

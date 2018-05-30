@@ -1,17 +1,20 @@
-
 <?php $this->load->view('header') ?>
-<script src="<?php echo base_url();?>assets/js/script.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="http://code.highcharts.com/modules/export-data.js"></script>
+<script src="<?php echo base_url();?>assets/js/dashboard.js"></script>
   <div class="navbar">
     <div class="navbar-inner">
       <div class="container-fluid">
         <a class="brand" href="#" name="top">BIACM Data Aggregation</a>
           <ul class="nav">
-            <li><a href="#"><i class="icon-home"></i> Dashboard</a></li>
+            <li class="active"><a href="#"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
+            <li><a href="../import/show_upload"><i class="icon-home"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
-              <a href="#" style="padding:10px;">
+              <a href="../users" style="padding:10px;">
                 <i class="icon-user"></i> Users
               </a>
             </li>
@@ -38,44 +41,15 @@
   </div>
   <!--/.navbar -->
 
-  <div class="container">
-    <div class="stepwizard">
-        <div class="stepwizard-row">
-            <div class="stepwizard-step">
-                <button type="button" class="btn btn-primary btn-circle">1</button>
-                <p>Upload File</p>
-            </div>
-            <div class="stepwizard-step">
-                <button type="button" class="btn btn-disabled btn-circle">2</button>
-                <p>Validation</p>
-            </div>
-            <div class="stepwizard-step">
-                <button type="button" class="btn btn-disabled btn-circle" disabled="disabled">3</button>
-                <p>Import</p>
-            </div> 
-        </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <small>
-          Upload Attachments
-        </small>
-      </div>
-      <div class="panel-body">
-
-        <!-- Standar Form -->
-        <h4>Please upload the files</h4>
-        <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
-          <div class="form-inline">
-            <div class="form-group">
-              <input type="file" name="files[]" id="js-upload-files" multiple>
-            </div>
-            <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button>
-          </div>
-        </form>
-      </div>
-    </div>
+  <div id="container" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto">
+    
+  </div>
+  <div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto">
+    
   </div>
 
+  <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto">
+    
+  </div>
     
 <?php $this->load->view('footer') ?>

@@ -9,7 +9,7 @@
             <li class="active"><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
-              <a href="#" style="padding:10px;">
+              <a href="../users" style="padding:10px;">
                 <i class="icon-user"></i> Users
               </a>
             </li>

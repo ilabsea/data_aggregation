@@ -1,7 +1,7 @@
 <?php
 
     defined('BASEPATH') OR exit('No direct script access allowed');
-    class User extends CI_Controller {
+    class Users extends CI_Controller {
 
         public function __construct()
     {
@@ -13,7 +13,7 @@
     {
         $data['users'] = $this->user->get_users();
  
-        $this->load->view('user',$data);
+        $this->load->view('users',$data);
     }
  
     public function view($slug = NULL)
@@ -45,6 +45,19 @@
         redirect( base_url() . 'index.php/users');        
     }
 
+    function create_new_user() {
+        $userInfo = $this->input->post(null,true);
+
+        if( count($userInfo) ) {
+          $this->load->model('user');
+          $saved = $this->user->create_new_user($userInfo);
+        }
+
+        if ( isset($saved) && $saved ) {
+           echo "success";
+        }
     }
+
+}
 
 ?>

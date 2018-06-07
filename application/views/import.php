@@ -124,10 +124,10 @@
     var startUpload = function(index, file_name, table_name, max_size) {
       if(index <= max_size)
         jQuery.ajax({
-            url: "<?php echo $this->config->item('import_app'); ?>import/import_data/" + table_name + "/" + file_name,
+            url: "../../imports/import_data/" + table_name ,
             type: "POST",
             data: JSON.stringify({excluded_case_ids : ignor_list}),
-            processData: false,
+            processData: true,
             contentType: 'application/json',
             start: function(){
               $("#" + table_name).attr("src", "../../../assets/img/loading.gif")

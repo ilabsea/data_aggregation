@@ -11,7 +11,7 @@
           <ul class="nav">
             <li class="active"><a href="#"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li><a href="../import/show_upload"><i class="icon-home"></i> Import Wizard</a></li>
+            <li><a href="../imports/show_upload"><i class="icon-home"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
               <a href="../users" style="padding:10px;">
@@ -44,12 +44,4 @@
   <div id="container" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto">
     
   </div>
-  <div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto">
-    
-  </div>
-
-  <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto">
-    
-  </div>
-    
 <?php $this->load->view('footer') ?>

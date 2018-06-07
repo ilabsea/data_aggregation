@@ -22,7 +22,7 @@ class Login extends CI_Controller {
         //Ensure values exist for email and pass, and validate the user's credentials
         if( $email && $pass && $this->user->validate_user($email,$pass)) {
             // If the user is valid, redirect to the main view
-            redirect('/import/show_upload');
+            redirect('/imports/show_upload');
         } else {
             // Otherwise show the login screen with an error message.
             $this->show_login(true);

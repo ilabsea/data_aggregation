@@ -4,30 +4,19 @@
       <div class="container-fluid">
         <a class="brand" href="#" name="top">BIACM Data Aggregation</a>
           <ul class="nav">
-            <li><a href="../dashboard/show_dashboard"><i class="icon-home"></i> Dashboard</a></li>
+            <li><a href="<?php echo base_url()."index.php/dashboard/show_dashboard";?>"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li class="active"><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
+            <li class="active"><a href="<?php echo base_url()."index.php/imports/show_upload";?>"><i class="icon-download"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
-              <a href="../users" style="padding:10px;">
+              <a href="<?php echo base_url()."index.php/users";?>" style="padding:10px;">
                 <i class="icon-user"></i> Users
               </a>
             </li>
             <li class="divider-vertical"></li>
           </ul>
           <div class="btn-group pull-right">
-            <?php if ($is_admin) : ?>
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-wrench"></i> admin	<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a data-toggle="modal" href="#myModal"><i class="icon-user"></i> New User</a></li>
-              <li class="divider"></li>
-              <li><a href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a></li>
-            </ul>
-            <?php else : ?>
               <a class="btn" href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a>
-            <?php endif; ?>
           </div>
       </div>
       <!--/.container-fluid -->
@@ -55,9 +44,20 @@
             </div> 
         </div>
     </div>
-    <?php $excluded_case_ids = array(); ?>
+    <form action="../show_import/<?php echo $file_name; ?>" method="post" enctype="multipart/form-data" id="js-upload-form">
+      <div class="form-inline">
+        <div class="form-group">
+          <input type="hidden" name="excluded_case_ids" id="excluded_case_ids" value="<?php echo join(',', $excluded_case_ids) ?>">
+        </div>
+        <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Proceed to Upload</button>
+      </div>
+    </form>
     <?php if(count($response) > 0){ ?>
-      * There are some validation errors that block the application todo import. Please fix the following error and reupload again to do import.
+      * There are some validation errors that block the application todo import. System will import only record that is valid and the errors will be ignore.
+      <?php if (count($excluded_case_ids) > 0){ ?>
+        <br /><br />
+        <a href="../export_errors_as_csv/<?php echo $file_name; ?>"><i class="icon-download"></i> Download Errors</a>
+      <?php } ?>
       <br /><br />
       <div class="row">
         <div class="col-md-12">
@@ -67,10 +67,7 @@
               ?>
               <?php foreach ($response as $case_id => $list) { ?>
                 <li>
-                  <span class="num">1</span>
-                  <?php 
-                    array_push($excluded_case_ids, $case_id);
-                  ?>
+                  <span class="num"><?php echo $i ; ?></span>
                   <a href="#"> Case ID <?php echo $case_id; ?> </a>
                   <ol>
                     <?php $j = 1; ?>
@@ -120,14 +117,5 @@
         </div>
       </div>
     <?php } ?>
-    <form action="../show_import/<?php echo $file_name; ?>" method="post" enctype="multipart/form-data" id="js-upload-form">
-      <div class="form-inline">
-        <div class="form-group">
-          <input type="hidden" name="excluded_case_ids" id="excluded_case_ids" value="<?php echo join(',', $excluded_case_ids) ?>">
-        </div>
-        <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Proceed to Upload</button>
-      </div>
-    </form>
   </div>
-
 <?php $this->load->view('footer') ?>

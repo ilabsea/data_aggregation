@@ -58,28 +58,28 @@
 				"encrypt" => true
 			)
 		),       
-		"tblcenter" =>  array(
-			"ODname" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"Code" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"Province" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"Disctrict" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-		),       
+		// "tblcenter" =>  array(
+		// 	"ODname" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"Code" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"Province" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"Disctrict" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// ),       
 		"tblconfirm" =>  array(
 			"CaseID" => array(
 				"mandatory" => false,
@@ -229,28 +229,28 @@
 				"type" => "text"
 			)
 		),       
-		"tblhealth" =>  array(
-			"Hid" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"HealthName" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"ODname" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"Province" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			)
-		),        
+		// "tblhealth" =>  array(
+		// 	"Hid" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"HealthName" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"ODname" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"Province" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	)
+		// ),        
 		"tbllabo" =>  array(
 			"CaseID" => array(
 				"mandatory" => false,
@@ -288,18 +288,18 @@
 				"type" => "text"
 			)
 		),           
-		"tblnamepreart" =>  array(
-			"Code" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"Sevicename" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			)
-		),    
+		// "tblnamepreart" =>  array(
+		// 	"Code" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"Sevicename" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	)
+		// ),    
 		"tblnote" =>  array(
 			"CaseID" => array(
 				"mandatory" => false,
@@ -699,23 +699,24 @@
 				"condition" => "",
 				"type" => "text"
 			)
-		),          
-		"tblvcctcode" =>  array(
-			"SiteCode" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"SiteName" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			),
-			"OdName" => array(
-				"mandatory" => false,
-				"condition" => "",
-				"type" => "text"
-			)
 		)
+		// ,          
+		// "tblvcctcode" =>  array(
+		// 	"SiteCode" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"SiteName" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	),
+		// 	"OdName" => array(
+		// 		"mandatory" => false,
+		// 		"condition" => "",
+		// 		"type" => "text"
+		// 	)
+		// )
 	);
 ?>

@@ -8,7 +8,7 @@ jQuery(function () {
 
     var startUpload = function(files) {
         jQuery.ajax({
-            url: "../../index.php/file/upload",
+            url: "../../index.php/imports/upload",
             type: "POST",
             data: files,
             processData: false,

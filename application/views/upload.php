@@ -6,30 +6,19 @@
       <div class="container-fluid">
         <a class="brand" href="#" name="top">BIACM Data Aggregation</a>
           <ul class="nav">
-            <li><a href="../dashboard/show_dashboard"><i class="icon-home"></i> Dashboard</a></li>
+            <li><a href="<?php echo base_url()."index.php/dashboard/show_dashboard";?>"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li class="active"><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
+            <li class="active"><a href="<?php echo base_url()."index.php/imports/show_upload";?>"><i class="icon-download"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
-              <a href="../users" style="padding:10px;">
+              <a href="<?php echo base_url()."index.php/users";?>" style="padding:10px;">
                 <i class="icon-user"></i> Users
               </a>
             </li>
             <li class="divider-vertical"></li>
           </ul>
           <div class="btn-group pull-right">
-            <?php if ($is_admin) : ?>
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-wrench"></i> admin	<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a data-toggle="modal" href="#myModal"><i class="icon-user"></i> New User</a></li>
-              <li class="divider"></li>
-              <li><a href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a></li>
-            </ul>
-            <?php else : ?>
               <a class="btn" href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a>
-            <?php endif; ?>
           </div>
       </div>
       <!--/.container-fluid -->

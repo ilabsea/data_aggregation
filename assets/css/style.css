@@ -1,3 +1,8 @@
+.to-right{
+  right: 0px;
+  float: right;
+}
+
 .upload-drop-zone {
   height: 200px;
   border-width: 2px;
@@ -168,3 +173,28 @@
   width: 16px;
   height: 16px;
 }
+
+input.span4, textarea.span4, .uneditable-input.span4 {
+  width: 260px;
+}
+
+.centered-form{
+  margin-top: 60px;
+}
+
+.centered-form .panel{
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: rgba(0, 0, 0, 0.3) 20px 20px 20px;
+}
+
+.custab{
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 5% 0;
+    box-shadow: 3px 3px 2px #ccc;
+    transition: 0.5s;
+    }
+.custab:hover{
+    box-shadow: 3px 3px 0px transparent;
+    transition: 0.5s;
+    }

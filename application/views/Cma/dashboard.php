@@ -43,6 +43,7 @@
   <!--/.navbar -->
 
   <div class="container">
+    <h2>NCHADS B-IACM CMA DASHBOARD CALCULATIONS</h2>
   <div class="row">
     <div class="column4">
       <div class="dash-box-blue dash-box-color-1">
@@ -118,7 +119,11 @@
         </div>
         
         <div class="dash-box-action">
-          <button>MOTHERS</button>
+          <button>
+            <a href="show_list_mother">
+              MOTHERS
+            </a>
+          </button>
         </div>        
       </div>
     </div>
@@ -127,35 +132,35 @@
         <div class="dash-box-body">
           
           <div class="column3">
-            <span class="dash-box-count">8,252</span>
+            <span class="dash-box-count"><?php echo count($record_child_need_pcr_test); ?></span>
           </div>
           <div class="column7">
             <span class="dash-box-title">need a PCR test</span>
           </div>
           <div class="clear"></div><br />
           <div class="column3">
-            <span class="dash-box-count">8,252</span>
+            <span class="dash-box-count"><?php echo count($record_child_need_confirmation_test); ?></span>
           </div>
           <div class="column7">
             <span class="dash-box-title">need a confirmation test</span>
           </div>
           <div class="clear"></div><br />
           <div class="column3">
-            <span class="dash-box-count">8,252</span>
+            <span class="dash-box-count"><?php echo count($record_child_not_enroll_in_pac); ?></span>
           </div>
           <div class="column7">
             <span class="dash-box-title">were not enrolled in PAC at birth</span>
           </div>
           <div class="clear"></div><br />
           <div class="column3">
-            <span class="dash-box-count">8,252</span>
+            <span class="dash-box-count"><?php echo count($record_child_need_enroll_pac_positive); ?></span>
           </div>
           <div class="column7">
             <span class="dash-box-title">need to be enrolled in PAC as a positive</span>
           </div>
           <div class="clear"></div><br />
           <div class="column3">
-            <span class="dash-box-count">8,252</span>
+            <span class="dash-box-count"><?php echo count($record_child_need_post_exposure_treatment); ?></span>
           </div>
           <div class="column7">
             <span class="dash-box-title">need to post-exposure treatment</span>
@@ -164,7 +169,11 @@
         </div>
         
         <div class="dash-box-action">
-          <button>BABIES</button>
+          <button>
+            <a href="show_list_babies">
+              BABIES
+            </a>
+          </button>
         </div>        
       </div>
     </div>

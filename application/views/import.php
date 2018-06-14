@@ -4,30 +4,19 @@
       <div class="container-fluid">
         <a class="brand" href="#" name="top">BIACM Data Aggregation</a>
           <ul class="nav">
-            <li><a href="#"><i class="icon-home"></i> Dashboard</a></li>
+            <li><a href="<?php echo base_url()."index.php/dashboard/show_dashboard";?>"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li class="active"><a href="#"><i class="icon-home"></i> Import Wizard</a></li>
+            <li class="active"><a href="<?php echo base_url()."index.php/imports/show_upload";?>"><i class="icon-download"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
             <li>
-              <a href="../users" style="padding:10px;">
+              <a href="<?php echo base_url()."index.php/users";?>" style="padding:10px;">
                 <i class="icon-user"></i> Users
               </a>
             </li>
             <li class="divider-vertical"></li>
           </ul>
           <div class="btn-group pull-right">
-            <?php if ($is_admin) : ?>
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-wrench"></i> admin	<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a data-toggle="modal" href="#myModal"><i class="icon-user"></i> New User</a></li>
-              <li class="divider"></li>
-              <li><a href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a></li>
-            </ul>
-            <?php else : ?>
               <a class="btn" href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a>
-            <?php endif; ?>
           </div>
       </div>
       <!--/.container-fluid -->
@@ -75,7 +64,7 @@
                     <?php $j = 1; ?>
                     <li>
                        <span class="num"><?php echo (string)$i.".".(string)$j; ?></span>
-                       <a href="#" style="padding-top:5px;">Total record : <?php echo $list[0]["total"]; ?></a>
+                       <a href="#" style="padding-top:5px;" id="<?php echo $table_name; ?>-text">Total record : <?php echo $list[0]["total"]; ?></a>
                        <img src="../../../assets/img/waiting.png" id="<?php echo $table_name; ?>" width="16"/>
                        <?php $j = $j + 1; ?>
                     </li>
@@ -124,16 +113,17 @@
     var startUpload = function(index, file_name, table_name, max_size) {
       if(index <= max_size)
         jQuery.ajax({
-            url: "../../imports/import_data/" + table_name ,
+            url: "../../imports/import_data/" + table_name + "/" + file_name,
             type: "POST",
             data: JSON.stringify({excluded_case_ids : ignor_list}),
             processData: true,
             contentType: 'application/json',
             start: function(){
-              $("#" + table_name).attr("src", "../../../assets/img/loading.gif")
+              $("#" + table_name).attr("src", "../../../assets/img/loading.gif");
             },
             success: function (result) {
-                $("#" + table_name).attr("src", "../../../assets/img/check.png")
+                $("#" + table_name).attr("src", "../../../assets/img/check.png");
+                $("#" + table_name + "-text").text("Total inserted : " + result);
                 var next_index = index + 1;
                 startUpload(index+1, file_name, table_list[next_index], max_size);
             }
@@ -144,7 +134,7 @@
 
     var removeUploadFile = function(file_name) {
       jQuery.ajax({
-          url: "../../../index.php/file/remove/" + file_name,
+          url: "../../../index.php/imports/remove/" + file_name,
           type: "POST",
           processData: false,
           contentType: 'application/json',
@@ -155,9 +145,27 @@
       });
     };
 
-    var i =0;
-    var max_size = table_list.length - 1;
-    startUpload(i, "<?php echo $file_name; ?>", table_list[i], max_size);
+    var prepareDataBeforeUpload = function(file_name) {
+      jQuery.ajax({
+          type: "POST",
+          url: "../../../index.php/imports/get_excluded_case_ids/" + file_name, 
+          processData: false,
+          data: JSON.stringify({excluded_case_ids : ignor_list}),
+          contentType: 'application/json',
+          success: function (result) {
+            var i =0;
+            var max_size = table_list.length - 1;
+            console.log(ignor_list);
+            var excluded_ids = JSON.parse(result);
+            console.log(excluded_ids);
+            ignor_list = ignor_list.concat(excluded_ids);
+            console.log(ignor_list);
+            startUpload(i, "<?php echo $file_name; ?>", table_list[i], max_size);
+          }
+      });
+    };
+    
+    prepareDataBeforeUpload("<?php echo $file_name; ?>");
 
   </script>
 <?php $this->load->view('footer') ?>

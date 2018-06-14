@@ -12,11 +12,24 @@ class Imports extends CI_Controller{
     }
   }
 
+  function upload(){
+    $this->load->model('File');
+    $info = pathinfo($_FILES['file']['tmp_name']);
+    $file_name = File::upload($info);
+    $this->create_new_tmp_database($this->to_db_name($file_name));
+    echo $file_name ;
+  }
+
+  function remove($file_name){
+    $this->load->model('File');
+    File::remove($file_name);
+    $this->remove_tmp_database($this->to_db_name($file_name));
+  }
 
   function process($file_name)
   {
     $this->restoreDatabaseTables($file_name);
-    return $this->preparing_data();
+    return $this->preparing_data($file_name);
   }
 
   function show_upload() {
@@ -38,7 +51,8 @@ class Imports extends CI_Controller{
     $data['email'] = $this->session->userdata('email');
     $data['name'] = $this->session->userdata('name');
     $data["response"] = $this->process($file_name);
-    $data["record_info"] = $this->upload_info();
+    $data["excluded_case_ids"] = $this->get_all_case_ids($data["response"]);
+    $data["record_info"] = $this->upload_info($file_name);
     $this->load->view('validation',$data);
   }
 
@@ -50,11 +64,64 @@ class Imports extends CI_Controller{
     $data['is_admin'] = $is_admin;
     $data['email'] = $this->session->userdata('email');
     $data['name'] = $this->session->userdata('name');
-    $data["response_data"] = $this->process($file_name);
-    $data["record_info"] = $this->upload_info();
+    $data["response_data"] = $this->preparing_data($file_name);
+    $data["record_info"] = $this->upload_info($file_name);
     $this->load->view('import',$data);
   }
 
+  function get_excluded_case_ids($file_name){
+    $dbtmp = $this->load_acm_tmp_db($file_name);
+    $params = json_decode($this->input->raw_input_stream, true);
+    if(!isset($params["excluded_case_ids"]))
+      $ignor_ids_text = "";
+    else
+      $ignor_ids_text = join(",", $params["excluded_case_ids"]);
+    $query = "select CaseID from tblpersonal where CaseID not in ($ignor_ids_text)";
+    $promp_ids_query = $dbtmp->query($query);
+    $this->load->database();
+    $promp_ids = $promp_ids_query->result_array();
+    $ids = array();
+    foreach($promp_ids as $value){
+      array_push($ids, $value["CaseID"]);
+    }
+    $list_ids = join(",", $ids);
+    $existed_ids_query = $this->db->query("select CaseID from tblpersonal where CaseID in ($list_ids)");
+    $existed_ids = $existed_ids_query->result_array();
+    $ids = array();
+    foreach($existed_ids as $value){
+      array_push($ids, $value["CaseID"]);
+    }
+    echo json_encode($ids);
+  }
+
+  function export_errors_as_csv($file_name){
+    $errors = $this->preparing_data($file_name);
+    $list = array();
+    array_push($list, array("Case ID" => "Case ID", "Table" => "Table", "Field" => "Field", "Message" => "Message Error"));
+    foreach($errors as $case_id => $error){
+      foreach($error as $key => $message){
+        $name = explode("-", $key);
+        array_push($list, array("Case ID" => $case_id, "Table" => $name[0], "Field" => $name[1], "Message" => $message));
+      }
+    }
+    header("Content-type: application/csv");
+    header("Content-Disposition: attachment; filename=\"$file_name".".csv\"");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    $handle = fopen('php://output', 'w');
+    foreach ($list as $data) {
+        fputcsv($handle, $data);
+    }
+    fclose($handle);
+  }
+
+  private function get_all_case_ids($response){
+    $case_ids = array();
+    foreach ($response as $key => $value) {
+      array_push($case_ids, $key);
+    }
+    return $case_ids;
+  }
 
   private function restoreDatabaseTables($file_name){
     $this->load->database();
@@ -63,20 +130,18 @@ class Imports extends CI_Controller{
     $server_name   = $this->db->hostname;
     $username      = $this->db->username;
     $password      = $this->db->password;
-    $database_name = $this->config->item("database_tmp_name");
-    $this->reset_database();
-    // $this->db->query("drop database $database_name");
-    // $this->db->query("create database $database_name");
-    // $cmd = "mysql -h {$server_name} -u {$username} -p{$password} {$database_name} < $schema_file";
+    $database_name = $this->to_db_name($file_name);
+    $this->db->query("drop database $database_name");
+    $this->db->query("create database $database_name");
     $cmd = "mysql -h {$server_name} -u {$username} -p{$password} {$database_name} < $restore_file";
     return exec($cmd);
   }
 
-  private function preparing_data(){
+  private function preparing_data($file_name){
     $this->config->load("table");
     $tables = $this->config->item("tables");
     $error = array();
-    $dbtmp = $this->load_acm_tmp_db();
+    $dbtmp = $this->load_acm_tmp_db($file_name);
     foreach ($tables as $table_name => $table_properties)
     {
         $error = $this->validate_table($dbtmp, $table_name, $table_properties, $error);
@@ -89,20 +154,18 @@ class Imports extends CI_Controller{
     unlink($stored_file);
   }
 
-  function import_data($table_name){
-    $dbtmp = $this->load_acm_tmp_db();
+  function import_data($table_name, $file_name){
+    $dbtmp = $this->load_acm_tmp_db($file_name);
     $params = json_decode($this->input->raw_input_stream, true);
     if(!isset($params["excluded_case_ids"]))
       $params["excluded_case_ids"] = [];
     $excluded_case_ids = $params["excluded_case_ids"];
     $tables = $this->config->item("tables");
     $table_properties = $tables[$table_name];
-    $this->move_data($dbtmp, $table_name, $excluded_case_ids);
-
+    echo $this->move_data($dbtmp, $table_name, $excluded_case_ids);
   }
 
-  private function validate_table($db, $table_name, $table_properties, $error){
-    $dbtmp = $this->load_acm_tmp_db();
+  private function validate_table($dbtmp, $table_name, $table_properties, $error){
     $sql="Select * from $table_name";
     // echo($sql);
     $result=$dbtmp->query($sql);
@@ -119,14 +182,16 @@ class Imports extends CI_Controller{
     $sql="Select * from $table_name";
     $result=$db->query($sql);
     $rows=$result->result_array();
+    $num_inserted = 0;
     foreach ($rows as $row) {
         if(isset($row["CaseID"]) and count($excluded_case_ids) != 0 and in_array($row["CaseID"], $excluded_case_ids)){
-            print_r("Continue");
             continue;
         }
         $sql = $this->build_sql_insert($this->db, $table_name, $row);
         $this->db->query($sql);
+        $num_inserted = $num_inserted + 1;
     }
+    return $num_inserted;
   }
 
   private function validate_record($table_name, $table_properties, $row, $error){
@@ -163,8 +228,8 @@ class Imports extends CI_Controller{
   }
 
   private function validate_time($CaseID, $condition, $value){
-    $this->load->db();
-    if (trim($condition) != ""){
+    $this->load->database();
+    if ($condition != ""){
       $table_name = $condition["table"];
       $field_name = $condition["field"];
       $operator = $condition["operator"];
@@ -224,7 +289,7 @@ class Imports extends CI_Controller{
     foreach ($row as $key => $value){
         if(isset($tables[$archived_tablename][$key]["encrypt"]))
           // $encrypted_string=$this->Crypto->encrypt($value, $key);
-          $value = $this->encrypt($value);
+          $value = $value;
         array_push($array_value, $db->escape($value));
     }
     $sql.= join(",", $array_value);
@@ -232,8 +297,8 @@ class Imports extends CI_Controller{
     return $sql;
   }
 
-  private function reset_database(){
-    $dbtmp = $this->load_acm_tmp_db();
+  private function reset_database($file_name){
+    $dbtmp = $this->load_acm_tmp_db($file_name);
     $this->config->load("table");
     $tables = $this->config->item("tables");
     foreach ($tables as $key => $table)
@@ -243,8 +308,8 @@ class Imports extends CI_Controller{
 
   }
 
-  function upload_info(){
-    $dbtmp = $this->load_acm_tmp_db();
+  function upload_info($file_name){
+    $dbtmp = $this->load_acm_tmp_db($file_name);
     $this->config->load("table");
     $tables = $this->config->item("tables");
     $number_table = count($tables);
@@ -301,15 +366,28 @@ class Imports extends CI_Controller{
   //   }
   // }
 
-  private function load_acm_tmp_db(){
+  private function create_new_tmp_database($database_name){
+    $this->load->database();
+    $this->db->query("create database $database_name");
+  }
+
+  private function remove_tmp_database($database_name){
+    $this->load->database();
+    $this->db->query("drop database $database_name");
+  }
+
+  private function load_acm_tmp_db($file_name){
+    $database_name = $this->to_db_name($file_name);
     $server_name   = $this->db->hostname;
     $username      = $this->db->username;
     $password      = $this->db->password;
-    $database_name = $this->config->item("database_tmp_name");
     $dsn1 = "mysqli://$username:$password@$server_name/$database_name";
     // echo($dsn1);
     return $this->load->database($dsn1, true);
+  }
 
+  private function to_db_name($file_name){
+    return str_replace(".", "", $file_name);
   }
 }
 ?>

@@ -1,9 +1,25 @@
 <?php
 
-
 class User extends CI_Model {
 
     var $details;
+
+    function get_users(){
+      $users = $this->db->get('user');
+      return $users->result();
+    }
+
+    function get_user($id){
+      $this->db->select("*");
+      $this->db->from("user");
+      $this->db->where("id", $id);
+      $users = $this->db->get();
+      return $users->result();
+    }
+
+    function delete_user($id){
+      $this->db->delete('user', array('id' => $id));
+    }
 
     function validate_user( $email, $password ) {
         // Build a query to retrieve the user's details
@@ -46,13 +62,9 @@ class User extends CI_Model {
     function  create_new_user( $userData ) {
       $data['firstName'] = $userData['firstName'];
       $data['lastName'] = $userData['lastName'];
-      $data['teamId'] = (int) $userData['teamId'];
       $data['isAdmin'] = (int) $userData['isAdmin'];
-      $data['avatar'] = $this->getAvatar();
       $data['email'] = $userData['email'];
-      $data['tagline'] = "Click here to edit tagline.";
-      $data['password'] = sha1($userData['password1']);
-
+      $data['password'] = sha1($userData['password']);
       return $this->db->insert('user',$data);
     }
 

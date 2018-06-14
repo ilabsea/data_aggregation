@@ -1,35 +1,28 @@
-
 <?php $this->load->view('header') ?>
-<script src="<?php echo base_url();?>assets/js/script.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="http://code.highcharts.com/modules/export-data.js"></script>
+<script src="<?php echo base_url();?>assets/js/dashboard.js"></script>
+<link rel="stylesheet" href="<?php echo base_url();?>assets/css/cma.css">
   <div class="navbar">
     <div class="navbar-inner">
       <div class="container-fluid">
         <a class="brand" href="#" name="top">BIACM Data Aggregation</a>
           <ul class="nav">
-            <li><a href="../dashboard/show_dashboard"><i class="icon-home"></i> Dashboard</a></li>
+            <li><a href="<?php echo base_url()."index.php/dashboard/show_dashboard";?>"><i class="icon-home"></i> Dashboard</a></li>
             <li class="divider-vertical"></li>
-            <li class="active"><a href="../imports/show_upload"><i class="icon-home"></i> Import Wizard</a></li>
+            <li><a href="<?php echo base_url()."index.php/imports/show_upload";?>"><i class="icon-download"></i> Import Wizard</a></li>
             <li class="divider-vertical"></li>
-            <li>
-              <a href="#" style="padding:10px;">
+            <li class="active">
+              <a href="<?php echo base_url()."index.php/users";?>" style="padding:10px;">
                 <i class="icon-user"></i> Users
               </a>
             </li>
             <li class="divider-vertical"></li>
           </ul>
           <div class="btn-group pull-right">
-            <?php if ($is_admin) : ?>
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-wrench"></i> admin	<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a data-toggle="modal" href="#myModal"><i class="icon-user"></i> New User</a></li>
-              <li class="divider"></li>
-              <li><a href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a></li>
-            </ul>
-            <?php else : ?>
               <a class="btn" href="<?php echo base_url() ?>/index.php/login/logout_user"><i class="icon-share"></i> Logout</a>
-            <?php endif; ?>
           </div>
       </div>
       <!--/.container-fluid -->
@@ -39,43 +32,71 @@
   <!--/.navbar -->
 
   <div class="container">
-    <div class="stepwizard">
-        <div class="stepwizard-row">
-            <div class="stepwizard-step">
-                <button type="button" class="btn btn-primary btn-circle">1</button>
-                <p>Upload File</p>
-            </div>
-            <div class="stepwizard-step">
-                <button type="button" class="btn btn-disabled btn-circle">2</button>
-                <p>Validation</p>
-            </div>
-            <div class="stepwizard-step">
-                <button type="button" class="btn btn-disabled btn-circle" disabled="disabled">3</button>
-                <p>Import</p>
-            </div> 
+    <h4>
+      List for Babies
+    </h4>
+    <div class="row">
+        <div class="col-md-12">
+          <a class="btn btn-primary to-right" href="#" name="top">Create User</a>
+          <h5>Mother expected to deliver within two weeks</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Full Name
+                        </th>
+                        <th>
+                            Email
+                        </th>
+                        <th>
+                            Is Admin?
+                        </th>
+                        <th>
+                            
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <?php if(count($users) <= 0){ ?>
+                    <tr>
+                      <td colspan="14" align="center"><center><font color="red" >No Record</font></center></td>
+                    </tr>
+                  <?php 
+                  }
+                  else{
+                  ?>
+                  <?php
+                  foreach ($users as $record){
+                  ?>
+                  <tr class="active">
+                    <td>
+                        <?php echo $record->email; ?>
+                    </td>
+                    <td>
+                        <?php echo($record->firstName . " " . $record->lastName); ?>
+                    </td>
+                    <td>
+                        <?php 
+                          if ($record->isAdmin == 1)
+                            echo "Yes";
+                          else
+                            echo "No";
+                        ?>
+                    </td>
+                    <td class="text-center">
+                      <?php if ($record->id != $user_id){ ?>
+                      <a href="users/edit_user/<?php echo $record->id ;?>"><i class="icon-edit"></i> Edit</a> <a href="users/delete_user/<?php echo $record->id ;?>" ><i class="icon-trash"></i> Delete</a>
+                      <?php } ?>
+                    </td>
+                  </tr>
+                  <?php 
+                    }
+                  }
+                  ?>
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <small>
-          Upload Attachments
-        </small>
-      </div>
-      <div class="panel-body">
-
-        <!-- Standar Form -->
-        <h4>Please upload the files</h4>
-        <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
-          <div class="form-inline">
-            <div class="form-group">
-              <input type="file" name="files[]" id="js-upload-files" multiple>
-            </div>
-            <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button>
-          </div>
-        </form>
-      </div>
-    </div>
   </div>
-
     
 <?php $this->load->view('footer') ?>

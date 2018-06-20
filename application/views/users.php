@@ -32,13 +32,9 @@
   <!--/.navbar -->
 
   <div class="container">
-    <h4>
-      List for Babies
-    </h4>
     <div class="row">
         <div class="col-md-12">
-          <a class="btn btn-primary to-right" href="#" name="top">Create User</a>
-          <h5>Mother expected to deliver within two weeks</h5>
+          <a class="btn btn-primary to-right" href="users/new" name="top">Create User</a>
             <table class="table">
                 <thead>
                     <tr>

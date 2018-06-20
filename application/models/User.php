@@ -68,6 +68,16 @@ class User extends CI_Model {
       return $this->db->insert('user',$data);
     }
 
+    function  update_user( $userData, $id) {
+      $data['firstName'] = $userData['firstName'];
+      $data['lastName'] = $userData['lastName'];
+      $data['isAdmin'] = (int) $userData['isAdmin'];
+      $data['email'] = $userData['email'];
+      $data['password'] = sha1($userData['password']);
+      $this->db->where("id", $id);
+      return $this->db->update('user',$data);
+    }
+
     public function update_tagline( $user_id, $tagline ) {
       $data = array('tagline'=>$tagline);
       $result = $this->db->update('user', $data, array('id'=>$user_id));

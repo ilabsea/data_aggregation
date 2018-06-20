@@ -11,22 +11,15 @@
  
     public function index()
     {
-        $user_id = $this->session->userdata('id');
-        $is_admin = $this->session->userdata('isAdmin');
-        $data['is_admin'] = $is_admin;
-        $data['email'] = $this->session->userdata('email');
-        $data['name'] = $this->session->userdata('name');
+        $data = $this->load_user_session();
         $data['users'] = $this->user->get_users();
-        $data['user_id'] = $user_id;
+        $data['user_id'] = $this->session->userdata('id');
         $this->load->view('users',$data);
     }
 
     public function new(){
-        $user_id = $this->session->userdata('id');
-        $is_admin = $this->session->userdata('isAdmin');
-        $data['is_admin'] = $is_admin;
-        $data['email'] = $this->session->userdata('email');
-        $data['name'] = $this->session->userdata('name');
+        $data = $this->load_user_session();
+        $data["errors"] = array();
         $this->load->view('new_user',$data);
     }
  
@@ -60,31 +53,91 @@
     function create_new_user() {
 
         $userInfo = $this->input->post(null,true);
-        print_r($userInfo);
+        if(isset($userInfo["isAdmin"])){
+            $userInfo["isAdmin"] = 1;
+        }
+        else{
+            $userInfo["sAdmin"] = 0;
+        }
         if( count($userInfo) ) {
           $this->load->model('user');
-          $saved = $this->user->create_new_user($userInfo);
+          $error = $this->validate_user($userInfo);
+          if(count($error) == 0)
+            $saved = $this->user->create_new_user($userInfo);
         }
 
         if ( isset($saved) && $saved ) {
            redirect( base_url() . 'index.php/users'); 
         }
+        else{
+            $data = $this->load_user_session();
+            $data["errors"] = $error;
+            $this->load->view('new_user',$data);
+        }
     }
 
     function edit_user($id){
+        $data = $this->load_user_session();
+        $data['user'] = $this->user->get_user($id)[0];
+        $data['errors'] = array();
+        $data['id'] = $id;
+        $this->load->view('edit_user',$data);
+    }
+
+    function update_user($id){
+        $userInfo = $this->input->post(null,true);
+
+        if(isset($userInfo["isAdmin"])){
+            $userInfo["isAdmin"] = 1;
+        }
+        else{
+            $userInfo["sAdmin"] = 0;
+        }
+        if( count($userInfo) ) {
+          $this->load->model('user');
+          $error = $this->validate_user($userInfo);
+          if(count($error) == 0)
+            $saved = $this->user->update_user($userInfo, $id);
+        }
+
+        if ( isset($saved) && $saved ) {
+           redirect( base_url() . 'index.php/users'); 
+        }
+        else{
+            $data = $this->load_user_session();
+            $data["errors"] = $error;
+            $data['user'] = $this->user->get_user($id)[0];
+            $data['id'] = $id;
+            $this->load->view('edit_user',$data);
+        }
+    }
+
+
+    function validate_user($user){
+        $error = array();
+        if($user["email"] ==""){
+            array_push($error, "Field email can not be empty.");
+        }
+        if($user["password"] ==""){
+            array_push($error, "Field password can not be empty.");
+        }
+        if($user["passwordConfirmation"] ==""){
+            array_push($error, "Field password confirmation can not be empty.");
+        }
+        if($user["password"] != $user["passwordConfirmation"]){
+            array_push($error, "Password not match.");
+        }
+        return $error;
+    }
+
+    function load_user_session(){
         $user_id = $this->session->userdata('id');
         $is_admin = $this->session->userdata('isAdmin');
         $data['is_admin'] = $is_admin;
         $data['email'] = $this->session->userdata('email');
         $data['name'] = $this->session->userdata('name');
-        $data['user'] = $this->user->get_user($id);
-        $this->load->view('edit_user',$data);
+        return $data;
     }
-
-    function update_user(){
-
-    }
-
 }
 
 ?>

@@ -32,12 +32,14 @@
   <!--/.navbar -->
 
   <div class="container">
+    <?php foreach ($errors as $error){ ?>
     <div class="alert alert-danger alert-normal-danger" hidden="hidden" style="display: block;">
         <button type="button" class="close">×</button>
-      I'm a normal danger message. To close use  the appropriate button.
+      <?php echo $error; ?>
     </div>
+    <?php } ?>
     <div class="area">
-      <form action="create_new_user" class="form-horizontal" method="POST">
+      <form action="../update_user/<?php echo($id); ?>" class="form-horizontal" method="POST">
           <div class="heading">
               <h4 class="form-heading">Edit user </h4>
           </div>
@@ -78,7 +80,7 @@
 
               <div class="controls">
                   <input id="inputPassword"  name="password" placeholder=
-                  "Min. 8 Characters" type="password" value="<?php echo $user->password; ?>">
+                  "Min. 8 Characters" type="password">
               </div>
           </div>
 
@@ -88,7 +90,7 @@
 
               <div class="controls">
                   <input id="inputPassword" name="passwordConfirmation" placeholder=
-                  "Min. 8 Characters" type="password" value="<?php echo $user->password; ?>">
+                  "Min. 8 Characters" type="password">
               </div>
           </div>
 
@@ -97,9 +99,10 @@
               "inputPassword">Is admin ?</label>
 
               <div class="controls">
-                <?php if ($user->isAdmin) {?>
+                <?php if ($user->isAdmin == 1) { ?>
                   <input type="checkbox" checked="checked"  name="isAdmin">
-                <?php}
+                <?php
+                }
                 else{ ?>
                   <input type="checkbox" name="isAdmin">
                 <?php } ?>
@@ -111,6 +114,9 @@
                   <button class="btn btn-success" type="submit">
                     Update
                   </button>
+                  <a class="btn" type="submit" href="../../users">
+                    Cancel
+                  </a>
               </div>
           </div>
       </form>

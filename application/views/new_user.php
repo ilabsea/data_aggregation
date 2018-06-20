@@ -32,10 +32,12 @@
   <!--/.navbar -->
 
   <div class="container">
+    <?php foreach ($errors as $error){ ?>
     <div class="alert alert-danger alert-normal-danger" hidden="hidden" style="display: block;">
         <button type="button" class="close">×</button>
-      I'm a normal danger message. To close use  the appropriate button.
+      <?php echo $error; ?>
     </div>
+    <?php } ?>
     <div class="area">
       <form action="create_new_user" class="form-horizontal" method="POST">
           <div class="heading">
@@ -106,6 +108,9 @@
                   <button class="btn btn-success" type="submit">
                     Save
                   </button>
+                  <a class="btn" type="submit" href="../users">
+                    Cancel
+                  </a>
               </div>
           </div>
       </form>

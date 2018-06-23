@@ -53,7 +53,25 @@
     <H4>Who are the new positives?</H4>
     <div class="row">
       <div class="column4">
-        <div id="percentage" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto">
+        <div id="percentage" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto">
+        </div>
+        <div id="percentage-types" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto;">
+        </div>
+      </div>
+      <?php foreach($graph as $key => $od){ ?>
+        <div class="column4">
+          <div id="percentage-od-<?php echo str_replace(" ", "-",$key); ?>" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto">
+          </div>
+          <div id="percentage-types-od-<?php echo str_replace(" ", "-",$key); ?>" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto;">
+          </div>
+        </div>
+      <?php } ?>
+      <div class="clear"></div>
+    </div>
+    <H4>Which site are finding the most new positives?</H4>
+    <div class="row">
+      <div class="column4">
+        <div id="most_found_hc" style="min-width: 800px; max-width: 800px; height: 300px; margin: 0 auto">
         </div>
       </div>
     </div>
@@ -132,7 +150,6 @@
             inc = Math.round((Math.random() - 0.5) * 20);
         
         newVal = parseInt($("#<?php echo str_replace(" ", "-",$t['TypeClient']); ?> ")[0].value) / parseInt($("#total-risk")[0].value);
-        console.log(newVal);
         point.update(newVal*100);
             
       }
@@ -283,21 +300,21 @@ $(function () {
   var data = [];
   var central_lines = [];
   <?php
-      foreach($graph_province["Battambang"] as $key => $value){
+      foreach($graph_province[$province] as $key => $value){
       if ($key != "central_line" and $key != "upper_line" and $key != "lower_line") {
   ?>
     data.push(parseInt("<?php echo $value[0]['total']; ?>"));
-    central_lines.push(parseInt("<?php echo $graph_province["Battambang"]["central_line"]; ?>"));
+    central_lines.push(parseInt("<?php echo $graph_province[$province]["central_line"]; ?>"));
   <?php }} ?>
-  var upper_line = "<?php echo $value["upper_line"]; ?>";
-  var lower_line = "<?php echo $value["lower_line"]; ?>";
+  var upper_line = parseFloat("<?php echo $graph_province[$province]["upper_line"]; ?>");
+  var lower_line = parseFloat("<?php echo $graph_province[$province]["lower_line"]; ?>");
   $(function () {
     $('#chart3').highcharts({
     chart: {
         type: 'areaspline'
     },
     title: {
-        text: 'Battambang'
+        text: '<?php echo $province; ?>'
     },
     xAxis: {
         categories: months
@@ -334,6 +351,253 @@ $(function () {
 })
 });
 
-
 </script>
+<script type="text/javascript">
+  var types = [];
+  var type_value = [];
+  var type_notvalue = [];
+  <?php foreach($type_client as $t){ 
+  ?>
+    types.push("<?php echo $t["TypeClient"] ; ?>");
+  <?php
+    if(isset($percentage_type[$t["TypeClient"]])){
+  ?>
+    type_value.push(parseFloat("<?php echo $percentage_type[$t["TypeClient"]]; ?>"));
+    
+  <?php }
+  else{
+  ?>
+    type_value.push(0);
+  <?php
+    $percentage_type[$t["TypeClient"]] = 0;
+  } 
+  ?>
+    type_notvalue.push(100 - parseFloat("<?php echo $percentage_type[$t["TypeClient"]]; ?>"))
+  <?php } ?>
+  $(function () {
+    $('#percentage-types').highcharts({
+      chart: {
+          type: 'bar'
+      },
+      title: {
+          text: '<?php echo $province; ?> = <?php echo $total_in_province[0]["total"]; ?> cases'
+      },
+      xAxis: {
+          categories: types
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Total fruit consumption'
+          }
+      },
+      legend: {
+          reversed: true
+      },
+      plotOptions: {
+          series: {
+              stacking: 'normal'
+          }
+      },
+      series: [{
+          name: 'Negative Percentage',
+          data: type_notvalue
+      }, {
+          name: 'Positive Percentage',
+          data: type_value
+      }]
+    })
+});
+</script>
+<script type="text/javascript">
+  $(function () {
+    $('#percentage').highcharts({
+      chart: {
+          type: 'bar'
+      },
+      title: {
+          text: "<?php echo $province; ?> = <?php echo $total_in_province[0]["total"]; ?> cases"
+      },
+      xAxis: {
+          categories: ["Female", "Male"]
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Total fruit consumption'
+          }
+      },
+      legend: {
+          reversed: true
+      },
+      plotOptions: {
+          series: {
+              stacking: 'normal'
+          }
+      },
+      series: [{
+          name: 'Negative Percentage',
+          data: [<?php echo $percentage_male; ?>, <?php echo $percentage_female; ?>]
+      }, {
+          name: 'Positive Percentage',
+          data: [<?php echo $percentage_female; ?>,<?php echo $percentage_male; ?>]
+      }]
+    })
+});
+</script>
+
+<script type="text/javascript">
+<?php 
+  foreach($ods as $od){ 
+?>
+  $(function () {
+    var od_types = [];
+    var od_type_value = [];
+    var od_type_notvalue = [];
+    <?php foreach($type_client as $t){ 
+    ?>
+      od_types.push("<?php echo $t["TypeClient"] ; ?>");
+    <?php
+      if(isset($percentage_type_od[$od["ODname"]][$t["TypeClient"]])){
+    ?>
+      od_type_value.push(parseFloat("<?php echo $percentage_type_od[$od["ODname"]][$t["TypeClient"]]; ?>"));
+      
+    <?php }
+    else{
+    ?>
+      od_type_value.push(0);
+    <?php
+      $percentage_type_od[$od["ODname"]][$t["TypeClient"]] = 0;
+    } 
+    ?>
+      od_type_notvalue.push(100 - parseFloat("<?php echo $percentage_type_od[$od["ODname"]][$t["TypeClient"]]; ?>"))
+    <?php } ?>
+    $('#percentage-types-od-<?php echo str_replace(" ", "-",$od['ODname']);?>').highcharts({
+      chart: {
+          type: 'bar'
+      },
+      title: {
+          text: 'OD <?php echo $od["ODname"]; ?>'
+      },
+      xAxis: {
+          categories: od_types
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Total fruit consumption'
+          }
+      },
+      legend: {
+          reversed: true
+      },
+      plotOptions: {
+          series: {
+              stacking: 'normal'
+          }
+      },
+      series: [{
+          name: 'Negative Percentage',
+          data: od_type_notvalue
+      }, {
+          name: 'Positive Percentage',
+          data: od_type_value
+      }]
+    })
+  });
+
+  $(function () {
+    $('#percentage-od-<?php echo str_replace(" ", "-",$od['ODname']);?>').highcharts({
+      chart: {
+          type: 'bar'
+      },
+      title: {
+          text: 'OD <?php echo $od["ODname"]; ?>'
+      },
+      xAxis: {
+          categories: ["Female", "Male"]
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Total fruit consumption'
+          }
+      },
+      legend: {
+          reversed: true
+      },
+      plotOptions: {
+          series: {
+              stacking: 'normal'
+          }
+      },
+      series: [{
+          name: 'Negative Percentage',
+          data: [100 - parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_female"]; ?>), 100 - parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_male"]; ?>)]
+      }, {
+          name: 'Positive Percentage',
+          data: [parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_female"]; ?>), parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_male"]; ?>)]
+      }]
+    })
+});
+<?php } ?>
+</script>
+
+<script type="text/javascript">
+  $(function () {
+    var column = [];
+    var data_value = [];
+    <?php foreach($most_hc_found_positive as $hc){ 
+    ?>
+      column.push("<?php echo $hc["PlaceTest"] ; ?>");
+      data_value.push(parseFloat("<?php echo $hc["total"] ; ?>"));
+    
+    <?php } ?>
+    $('#most_found_hc').highcharts({
+      chart: {
+          type: 'bar'
+      },
+      title: {
+          text: "<?php echo $province; ?> = <?php echo $total_in_province[0]["total"]; ?> cases"
+      },
+      xAxis: {
+          categories: column
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: ''
+          }
+      },
+      legend: {
+          reversed: true
+      },
+      plotOptions: {
+          series: {
+              stacking: 'normal'
+          }
+      },
+      series: [{
+          name: 'Negative Percentage',
+          data: data_value
+      }]
+    })
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <?php $this->load->view('footer') ?>

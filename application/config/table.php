@@ -422,7 +422,7 @@
 			"ARTnum" => array(
 				"mandatory" => false,
 				"condition" => "",
-				"min_digit" => 10,
+				"min_digit" => 9,
 				"max_digit" => 10,
 				"type" => "text",
 				"encrypt" => true

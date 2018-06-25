@@ -68,11 +68,34 @@
       <?php } ?>
       <div class="clear"></div>
     </div>
+
     <H4>Which site are finding the most new positives?</H4>
     <div class="row">
       <div class="column4">
         <div id="most_found_hc" style="min-width: 800px; max-width: 800px; height: 300px; margin: 0 auto">
         </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="column5">
+        <H4>Why we are losing confirmed?</H4>
+        <div id="losing_confirm" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+        <H4>How long it takes to link reactive to confirmation?</H4>
+        <div id="duration_link_confirm" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+        <H4>What are the characteristics of those not confirm at VCCT?</H4>
+        <div id="sex_lost_confirm" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+        <div id="type_lost_confirm" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+      </div>
+      <div class="column5">
+        <H4>Why we are losing to enroll OI?</H4>
+        <div id="losing_enroll" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto">
+        </div>
+        <H4>How long it takes to link confirmed to enrollment?</H4>
+        <div id="duration_link_enrollment" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+        <H4>What are the characteristics of those not on treatment?</H4>
+        <div id="sex_lost_enroll" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+        <div id="type_lost_enroll" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
       </div>
     </div>
   </div>
@@ -101,7 +124,7 @@
         plotOptions: {
           gauge: {
             dataLabels: {
-              enabled: false
+              enabled: true
             },
             dial: {
               baseLength: '0%',
@@ -180,7 +203,7 @@ $(function () {
         plotOptions: {
           gauge: {
             dataLabels: {
-              enabled: false
+              enabled: true
             },
             dial: {
               baseLength: '0%',
@@ -355,7 +378,6 @@ $(function () {
 <script type="text/javascript">
   var types = [];
   var type_value = [];
-  var type_notvalue = [];
   <?php foreach($type_client as $t){ 
   ?>
     types.push("<?php echo $t["TypeClient"] ; ?>");
@@ -371,9 +393,7 @@ $(function () {
   <?php
     $percentage_type[$t["TypeClient"]] = 0;
   } 
-  ?>
-    type_notvalue.push(100 - parseFloat("<?php echo $percentage_type[$t["TypeClient"]]; ?>"))
-  <?php } ?>
+  } ?>
   $(function () {
     $('#percentage-types').highcharts({
       chart: {
@@ -400,9 +420,6 @@ $(function () {
           }
       },
       series: [{
-          name: 'Negative Percentage',
-          data: type_notvalue
-      }, {
           name: 'Positive Percentage',
           data: type_value
       }]
@@ -436,9 +453,6 @@ $(function () {
           }
       },
       series: [{
-          name: 'Negative Percentage',
-          data: [<?php echo $percentage_male; ?>, <?php echo $percentage_female; ?>]
-      }, {
           name: 'Positive Percentage',
           data: [<?php echo $percentage_female; ?>,<?php echo $percentage_male; ?>]
       }]
@@ -453,7 +467,6 @@ $(function () {
   $(function () {
     var od_types = [];
     var od_type_value = [];
-    var od_type_notvalue = [];
     <?php foreach($type_client as $t){ 
     ?>
       od_types.push("<?php echo $t["TypeClient"] ; ?>");
@@ -470,7 +483,6 @@ $(function () {
       $percentage_type_od[$od["ODname"]][$t["TypeClient"]] = 0;
     } 
     ?>
-      od_type_notvalue.push(100 - parseFloat("<?php echo $percentage_type_od[$od["ODname"]][$t["TypeClient"]]; ?>"))
     <?php } ?>
     $('#percentage-types-od-<?php echo str_replace(" ", "-",$od['ODname']);?>').highcharts({
       chart: {
@@ -497,9 +509,6 @@ $(function () {
           }
       },
       series: [{
-          name: 'Negative Percentage',
-          data: od_type_notvalue
-      }, {
           name: 'Positive Percentage',
           data: od_type_value
       }]
@@ -532,9 +541,6 @@ $(function () {
           }
       },
       series: [{
-          name: 'Negative Percentage',
-          data: [100 - parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_female"]; ?>), 100 - parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_male"]; ?>)]
-      }, {
           name: 'Positive Percentage',
           data: [parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_female"]; ?>), parseFloat(<?php echo $percentage_type_od[$od["ODname"]]["percentage_male"]; ?>)]
       }]
@@ -599,5 +605,5 @@ $(function () {
 
 
 
-
+<?php $this->load->view('Provincial/not_confirm') ?>
 <?php $this->load->view('footer') ?>

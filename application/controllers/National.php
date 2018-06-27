@@ -36,22 +36,35 @@ class National extends CI_Controller{
     
     $data = $this->get_infected_percentage_in_country_as_sex($data);
     $data = $this->get_infected_percentage_in_country_as_clientType($data);
-    $data = $this->get_infected_percentage_in_provinces($data["provinces"], $data);
+    $data = $this->get_infected_percentage_in_country($data["provinces"], $data);
     $data = $this->get_infected_from_every_province($data);
     $data = $this->get_infected_percentage_in_country_as_clientType_by_quater($data, '2017');
     $data = $this->get_not_confirm_test_in_country($data["provinces"], $data,26);
     $data = $this->get_not_enrollment_test_in_country($data["provinces"], $data,26);
     $data = $this->get_not_avg_linkage_in_country($data["provinces"], $data,26);
-    // $data = $this->get_not_enroll_test_as_province($data["province"], $data,3);
-    // $data = $this->get_duration_link_confirmed($data["province"], $data,3);
-    // $data = $this->get_duration_link_enroll($data["province"], $data,3);
-    // $data = $this->get_not_confirm_test_in_province_as_sex($data["province"], $data,33);
-    // $data = $this->get_not_confirm_test_in_province_as_client_type($data["province"], $data,33);
-    // $data = $this->get_not_enroll_test_in_province_as_sex($data["province"], $data,33);
-    // $data = $this->get_not_enroll_test_in_province_as_client_type($data["province"], $data,33);
-    print_r($data);
+    $data = $this->get_not_confirm_test($data,33);
+    $data = $this->get_not_enroll_test($data,33);
+    $data = $this->get_duration_link_confirmed($data,33);
+    $data = $this->get_duration_link_enroll($data,33);
+    $data = $this->get_not_confirm_test_in_country_as_sex($data,33);
+    $data = $this->get_not_confirm_test_in_country_as_client_type($data,33);
+    $data = $this->get_not_enroll_test_in_country_as_sex($data,33);
+    $data = $this->get_not_enroll_test_in_country_as_client_type($data,33);
+    // print_r($data);
     // exit;
     $this->load->view('National/dashboard',$data);
+  }
+
+  function get_not_enroll_test($data, $from_number_of_month){
+    $day = 30 * $from_number_of_month;
+    $data["reason_not_enroll_in_country"] = $this->get_tester_not_enroll("NOW() - INTERVAL $day DAY", "NOW()");
+    return $data;
+  }
+
+  function get_not_confirm_test($data, $from_number_of_month){
+    $day = 30 * $from_number_of_month;
+    $data["reason_not_confirm_in_country"] = $this->get_tester_not_confirm("NOW() - INTERVAL $day DAY", "NOW()");
+    return $data;
   }
 
   function get_not_avg_linkage_in_country($provinces, $data, $from_number_of_month){
@@ -88,15 +101,15 @@ class National extends CI_Controller{
 
   
 
-  function get_not_confirm_test_in_province_as_sex($province_name, $data, $from_number_of_month){
+  function get_not_confirm_test_in_country_as_sex($data, $from_number_of_month){
     $day = 30 * $from_number_of_month;
-    $data["reason_not_confirm_as_sex"] = $this->get_tester_not_confirm_in_province_as_sex($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
+    $data["reason_not_confirm_as_sex"] = $this->get_tester_not_confirm_in_country_as_sex("NOW() - INTERVAL $day DAY", "NOW()");
     return $data;
   }
 
-  function get_not_confirm_test_in_province_as_client_type($province_name, $data, $from_number_of_month){
+  function get_not_confirm_test_in_country_as_client_type($data, $from_number_of_month){
     $day = 30 * $from_number_of_month;
-    $list = $this->get_tester_not_confirm_in_province_as_client_type($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
+    $list = $this->get_tester_not_confirm_in_country_as_client_type("NOW() - INTERVAL $day DAY", "NOW()");
     $data["reason_not_confirm_as_type"] = array();
     foreach ($list as $key => $value) {
       $data["reason_not_confirm_as_type"][$value["TypeClient"]] = $value["total"];
@@ -104,15 +117,15 @@ class National extends CI_Controller{
     return $data;
   }
 
-  function get_not_enroll_test_in_province_as_sex($province_name, $data, $from_number_of_month){
+  function get_not_enroll_test_in_country_as_sex($data, $from_number_of_month){
     $day = 30 * $from_number_of_month;
-    $data["reason_not_enroll_as_sex"] = $this->get_tester_not_enroll_in_province_as_sex($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
+    $data["reason_not_enroll_as_sex"] = $this->get_tester_not_enroll_in_country_as_sex("NOW() - INTERVAL $day DAY", "NOW()");
     return $data;
   }
 
-  function get_not_enroll_test_in_province_as_client_type($province_name, $data, $from_number_of_month){
+  function get_not_enroll_test_in_country_as_client_type($data, $from_number_of_month){
     $day = 30 * $from_number_of_month;
-    $list = $this->get_tester_not_enroll_in_province_as_client_type($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
+    $list = $this->get_tester_not_enroll_in_country_as_client_type("NOW() - INTERVAL $day DAY", "NOW()");
     $data["reason_not_enroll_as_type"] = array();
     foreach ($list as $key => $value) {
       $data["reason_not_enroll_as_type"][$value["TypeClient"]] = $value["total"];
@@ -120,19 +133,19 @@ class National extends CI_Controller{
     return $data;
   }
 
-  function get_duration_link_confirmed($province_name, $data, $from_number_of_month){
+  function get_duration_link_confirmed($data, $from_number_of_month){
     $day = 30 * $from_number_of_month;
-    $data["duration_confirmed"]["one_to_two_days"] = $this->get_tester_confirmed_by_province_within_one_two_days($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
-    $data["duration_confirmed"]["three_to_seven_days"] = $this->get_tester_confirmed_by_province_from_three_to_seven_days($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
-    $data["duration_confirmed"]["more_than_seven_days"] = $this->get_tester_confirmed_by_province_more_than_seven_days($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
+    $data["duration_confirmed"]["one_to_two_days"] = $this->get_tester_confirmed_by_country_within_one_two_days("NOW() - INTERVAL $day DAY", "NOW()");
+    $data["duration_confirmed"]["three_to_seven_days"] = $this->get_tester_confirmed_by_country_from_three_to_seven_days("NOW() - INTERVAL $day DAY", "NOW()");
+    $data["duration_confirmed"]["more_than_seven_days"] = $this->get_tester_confirmed_by_country_more_than_seven_days("NOW() - INTERVAL $day DAY", "NOW()");
     return $data;
   }
 
-  function get_duration_link_enroll($province_name, $data, $from_number_of_month){
+  function get_duration_link_enroll($data, $from_number_of_month){
     $day = 30 * $from_number_of_month;
-    $data["duration_enroll"]["one_to_two_days"] = $this->get_tester_enroll_by_province_within_one_two_days($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
-    $data["duration_enroll"]["three_to_seven_days"] = $this->get_tester_enroll_by_province_within_three_to_seven_day($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
-    $data["duration_enroll"]["more_than_seven_days"] = $this->get_tester_enroll_by_province_more_than_seven_day($province_name,"NOW() - INTERVAL $day DAY", "NOW()");
+    $data["duration_enroll"]["one_to_two_days"] = $this->get_tester_enroll_by_country_within_one_two_days("NOW() - INTERVAL $day DAY", "NOW()");
+    $data["duration_enroll"]["three_to_seven_days"] = $this->get_tester_enroll_by_country_within_three_to_seven_day("NOW() - INTERVAL $day DAY", "NOW()");
+    $data["duration_enroll"]["more_than_seven_days"] = $this->get_tester_enroll_by_country_more_than_seven_day("NOW() - INTERVAL $day DAY", "NOW()");
 
     return $data;
   }
@@ -185,7 +198,7 @@ class National extends CI_Controller{
     return $data;
   }
 
-  function get_infected_percentage_in_provinces($provinces, $data){
+  function get_infected_percentage_in_country($provinces, $data){
     foreach($provinces as $province){
       $province_name = $province["ProvinceEng"];
       $client_types = $this->get_client_type();
@@ -440,23 +453,23 @@ class National extends CI_Controller{
     return $result->result_array();
   }
 
-  function get_tester_confirmed_by_province_within_one_two_days($province_name, $from, $to){
+  function get_tester_confirmed_by_country_within_one_two_days($from, $to){
     $this->load->database();
-    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code WHERE tblcenter.Province='$province_name' AND (tblfirsttest.DatTest BETWEEN $from AND $to) AND tblconfirm.Dat BETWEEN tblfirsttest.DatTest AND tblfirsttest.DatTest + INTERVAL 2 DAY";
+    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID WHERE (tblfirsttest.DatTest BETWEEN $from AND $to) AND tblconfirm.Dat BETWEEN tblfirsttest.DatTest AND tblfirsttest.DatTest + INTERVAL 2 DAY";
     $result = $this->db->query($query);
     return $result->result_array();
   }
 
-  function get_tester_confirmed_by_province_from_three_to_seven_days($province_name, $from, $to){
+  function get_tester_confirmed_by_country_from_three_to_seven_days($from, $to){
     $this->load->database();
-    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code WHERE tblcenter.Province='$province_name' AND (tblfirsttest.DatTest BETWEEN $from AND $to) AND tblconfirm.Dat BETWEEN tblfirsttest.DatTest + INTERVAL 3 DAY AND tblfirsttest.DatTest + INTERVAL 7 DAY";
+    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID WHERE (tblfirsttest.DatTest BETWEEN $from AND $to) AND tblconfirm.Dat BETWEEN tblfirsttest.DatTest + INTERVAL 3 DAY AND tblfirsttest.DatTest + INTERVAL 7 DAY";
     $result = $this->db->query($query);
     return $result->result_array();
   }
 
-  function get_tester_confirmed_by_province_more_than_seven_days($province_name, $from, $to){
+  function get_tester_confirmed_by_country_more_than_seven_days($from, $to){
     $this->load->database();
-    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code WHERE tblcenter.Province='$province_name' AND (tblfirsttest.DatTest BETWEEN $from AND $to) AND tblconfirm.Dat > tblfirsttest.DatTest + INTERVAL 7 DAY";
+    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID WHERE (tblfirsttest.DatTest BETWEEN $from AND $to) AND tblconfirm.Dat > tblfirsttest.DatTest + INTERVAL 7 DAY";
     $result = $this->db->query($query);
     return $result->result_array();
   }
@@ -468,23 +481,23 @@ class National extends CI_Controller{
     return $result->result_array();
   }
 
-  function get_tester_enroll_by_province_within_one_two_days($province_name, $from, $to){
+  function get_tester_enroll_by_country_within_one_two_days($from, $to){
     $this->load->database();
-    $query = "SELECT count(*) AS total FROM tblconfirm INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code INNER JOIN tblregoi on tblconfirm.CaseID=tblregoi.CaseID WHERE tblcenter.Province='$province_name' AND tblconfirm.Dat BETWEEN $from AND $to AND tblregoi.DatReg BETWEEN tblconfirm.Dat AND tblconfirm.Dat + INTERVAL 2 DAY";
+    $query = "SELECT count(*) AS total FROM tblconfirm INNER JOIN tblregoi on tblconfirm.CaseID=tblregoi.CaseID WHERE tblconfirm.Dat BETWEEN $from AND $to AND tblregoi.DatReg BETWEEN tblconfirm.Dat AND tblconfirm.Dat + INTERVAL 2 DAY";
     $result = $this->db->query($query);
     return $result->result_array();
   }
 
-  function get_tester_enroll_by_province_within_three_to_seven_day($province_name, $from, $to){
+  function get_tester_enroll_by_country_within_three_to_seven_day($from, $to){
     $this->load->database();
-    $query = "SELECT count(*) AS total FROM tblconfirm INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code INNER JOIN tblregoi on tblconfirm.CaseID=tblregoi.CaseID WHERE tblcenter.Province='$province_name' AND tblconfirm.Dat BETWEEN $from AND $to AND tblregoi.DatReg BETWEEN tblconfirm.Dat + INTERVAL 3 DAY AND tblconfirm.Dat + INTERVAL 7 DAY";
+    $query = "SELECT count(*) AS total FROM tblconfirm INNER JOIN tblregoi on tblconfirm.CaseID=tblregoi.CaseID WHERE tblconfirm.Dat BETWEEN $from AND $to AND tblregoi.DatReg BETWEEN tblconfirm.Dat + INTERVAL 3 DAY AND tblconfirm.Dat + INTERVAL 7 DAY";
     $result = $this->db->query($query);
     return $result->result_array();
   }
 
-  function get_tester_enroll_by_province_more_than_seven_day($province_name, $from, $to){
+  function get_tester_enroll_by_country_more_than_seven_day($from, $to){
     $this->load->database();
-    $query = "SELECT count(*) AS total FROM tblconfirm INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code INNER JOIN tblregoi on tblconfirm.CaseID=tblregoi.CaseID WHERE tblcenter.Province='$province_name' AND tblconfirm.Dat BETWEEN $from AND $to AND tblregoi.DatReg > tblconfirm.Dat + INTERVAL 7 DAY";
+    $query = "SELECT count(*) AS total FROM tblconfirm INNER JOIN tblregoi on tblconfirm.CaseID=tblregoi.CaseID WHERE tblconfirm.Dat BETWEEN $from AND $to AND tblregoi.DatReg > tblconfirm.Dat + INTERVAL 7 DAY";
     $result = $this->db->query($query);
     return $result->result_array();
   }
@@ -496,30 +509,44 @@ class National extends CI_Controller{
     return $result->result_array();
   }
 
-  function get_tester_not_confirm_in_province_as_sex($province_name, $from, $to){
+  function get_tester_not_confirm($from, $to){
     $this->load->database();
-    $query = "SELECT tblpersonal.Sex, count(*) AS total FROM tblfirsttest INNER JOIN tblcenter ON tblfirsttest.Code=tblcenter.Code  INNER JOIN tblpersonal ON tblfirsttest.CaseID=tblpersonal.CaseID WHERE tblfirsttest.CaseID not in (select CaseID from tblconfirm) AND tblcenter.Province='$province_name' AND tblfirsttest.DatTest BETWEEN $from AND $to GROUP BY tblpersonal.Sex";
+    $query = "SELECT tblstatus.Status, count(*) AS total FROM tblfirsttest INNER JOIN tblstatus ON tblstatus.CaseID=tblfirsttest.CaseID WHERE tblfirsttest.CaseID not in (select CaseID from tblconfirm) AND tblfirsttest.DatTest BETWEEN $from AND $to GROUP BY tblstatus.Status";
     $result = $this->db->query($query);
     return $result->result_array();
   }
 
-  function get_tester_not_confirm_in_province_as_client_type($province_name, $from, $to){
+  function get_tester_not_confirm_in_country_as_sex($from, $to){
     $this->load->database();
-    $query = "SELECT tblfirsttest.TypeClient, count(*) AS total FROM tblfirsttest INNER JOIN tblcenter ON tblfirsttest.Code=tblcenter.Code WHERE tblfirsttest.CaseID not in (select CaseID from tblconfirm) AND tblcenter.Province='$province_name' AND tblfirsttest.DatTest BETWEEN $from AND $to GROUP BY tblfirsttest.TypeClient";
+    $query = "SELECT tblpersonal.Sex, count(*) AS total FROM tblfirsttest INNER JOIN tblpersonal ON tblfirsttest.CaseID=tblpersonal.CaseID WHERE tblfirsttest.CaseID not in (select CaseID from tblconfirm) AND tblfirsttest.DatTest BETWEEN $from AND $to GROUP BY tblpersonal.Sex";
     $result = $this->db->query($query);
     return $result->result_array();
   }
 
-  function get_tester_not_enroll_in_province_as_sex($province_name, $from, $to){
+  function get_tester_not_confirm_in_country_as_client_type($from, $to){
     $this->load->database();
-    $query = "SELECT tblpersonal.Sex, count(*) AS total FROM tblconfirm INNER JOIN tblfirsttest ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code  INNER JOIN tblpersonal ON tblconfirm.CaseID=tblpersonal.CaseID WHERE tblconfirm.CaseID not in (select CaseID from tblregoi) AND tblcenter.Province='$province_name' AND tblconfirm.Dat BETWEEN $from AND $to GROUP BY tblpersonal.Sex";
+    $query = "SELECT tblfirsttest.TypeClient, count(*) AS total FROM tblfirsttest WHERE tblfirsttest.CaseID not in (select CaseID from tblconfirm) AND tblfirsttest.DatTest BETWEEN $from AND $to GROUP BY tblfirsttest.TypeClient";
     $result = $this->db->query($query);
     return $result->result_array();
   }
 
-  function get_tester_not_enroll_in_province_as_client_type($province_name, $from, $to){
+  function get_tester_not_enroll_in_country_as_sex($from, $to){
     $this->load->database();
-    $query = "SELECT tblfirsttest.TypeClient, count(*) AS total FROM tblconfirm INNER JOIN tblfirsttest ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code WHERE tblconfirm.CaseID not in (select CaseID from tblregoi) AND tblcenter.Province='$province_name' AND tblconfirm.Dat BETWEEN $from AND $to GROUP BY tblfirsttest.TypeClient";
+    $query = "SELECT tblpersonal.Sex, count(*) AS total FROM tblconfirm INNER JOIN tblfirsttest ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblpersonal ON tblconfirm.CaseID=tblpersonal.CaseID WHERE tblconfirm.CaseID not in (select CaseID from tblregoi) AND tblconfirm.Dat BETWEEN $from AND $to GROUP BY tblpersonal.Sex";
+    $result = $this->db->query($query);
+    return $result->result_array();
+  }
+
+  function get_tester_not_enroll($from, $to){
+    $this->load->database();
+    $query = "SELECT tblstatus.Status, count(*) AS total FROM tblconfirm INNER JOIN tblstatus  ON tblstatus.CaseID=tblconfirm.CaseID WHERE tblconfirm.CaseID not in (select CaseID from tblregoi) AND tblconfirm.Dat BETWEEN $from AND $to GROUP BY tblstatus.Status";
+    $result = $this->db->query($query);
+    return $result->result_array();
+  }
+
+  function get_tester_not_enroll_in_country_as_client_type($from, $to){
+    $this->load->database();
+    $query = "SELECT tblfirsttest.TypeClient, count(*) AS total FROM tblconfirm INNER JOIN tblfirsttest ON tblconfirm.CaseID=tblfirsttest.CaseID WHERE tblconfirm.CaseID not in (select CaseID from tblregoi) AND tblconfirm.Dat BETWEEN $from AND $to GROUP BY tblfirsttest.TypeClient";
     $result = $this->db->query($query);
     return $result->result_array();
    }

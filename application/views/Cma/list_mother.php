@@ -104,7 +104,7 @@
                         <?php echo $record["phone_number"]; ?>
                     </td>
                     <td>
-                        <?php if($record["art"] != "" or $record["art" != null]) {
+                        <?php if($record["art"] != "" or $record["art"] != null) {
                           echo "Yes";
                         }
                         else{

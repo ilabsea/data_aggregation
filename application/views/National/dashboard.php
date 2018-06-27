@@ -62,6 +62,28 @@
     <div class="clear"></div>
     <div id="number_positive_by_quater" ></div>
     <div class="row">
+      <div class="column5">
+        <H4>Why we are losing confirmed?</H4>
+        <div id="losing_confirm" style="min-width: 300px; max-width: 300px; height: 200px; margin: 0 auto"></div>
+        <H4>How long it takes to link reactive to confirmation?</H4>
+        <div id="duration_link_confirm" style="min-width: 300px; max-width: 300px; height: 200px; margin: 0 auto"></div>
+        <H4>What are the characteristics of those not confirm at VCCT?</H4>
+        <div id="sex_lost_confirm" style="min-width: 300px; max-width: 300px; height: 200px; margin: 0 auto"></div>
+        <div id="type_lost_confirm" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+      </div>
+      <div class="column5">
+        <H4>Why we are losing to enroll OI?</H4>
+        <div id="losing_enroll" style="min-width: 300px; max-width: 300px; height: 200px; margin: 0 auto">
+        </div>
+        <H4>How long it takes to link confirmed to enrollment?</H4>
+        <div id="duration_link_enrollment" style="min-width: 300px; max-width: 300px; height: 200px; margin: 0 auto"></div>
+        <H4>What are the characteristics of those not on treatment?</H4>
+        <div id="sex_lost_enroll" style="min-width: 300px; max-width: 300px; height: 200px; margin: 0 auto"></div>
+        <div id="type_lost_enroll" style="min-width: 300px; max-width: 300px; height: 300px; margin: 0 auto"></div>
+      </div>
+    </div>
+    <H4>Which type of clients have the highest Lost To Follow-up? How quickly are people getting linked to VCCT confirmation at TX?</H4>
+    <div class="row">
       <div class="column4">
         <div id="lost_confirmation" style="min-width: 300px; max-width: 300px; height: 500px; margin: 0 auto;">></div>
       </div>
@@ -606,5 +628,5 @@ $(function () {
     })
 });
 </script>
-
+<?php $this->load->view('National/not_confirm') ?>
 <?php $this->load->view('footer') ?>

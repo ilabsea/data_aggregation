@@ -4,7 +4,7 @@
   var num_moved = 0;
   var num_total = 0;
 
-  <?php foreach ($reason_not_confirm as $obj) {
+  <?php foreach ($reason_not_confirm_in_country as $obj) {
     ?>
     
     <?php
@@ -158,7 +158,7 @@
   var not_enroll_num_death = 0;
   var not_enroll_num_moved = 0;
   var not_enroll_total = 0;
-  <?php foreach ($reason_not_enroll as $obj) {
+  <?php foreach ($reason_not_enroll_in_country as $obj) {
     ?>
     not_enroll_total = not_enroll_total + parseInt("<?php echo $obj['total'];?>")
     <?php

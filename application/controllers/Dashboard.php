@@ -13,11 +13,16 @@ class Dashboard extends CI_Controller{
   }
 
   function show_dashboard(){
-  	$user_id = $this->session->userdata('id');
-    $is_admin = $this->session->userdata('isAdmin');
-    $data['is_admin'] = $is_admin;
-    $data['email'] = $this->session->userdata('email');
-    $data['name'] = $this->session->userdata('name');
-    $this->load->view('dashboard',$data);
+    $level  = $this->config->item("level");
+    if($level == 'CMA'){
+      redirect('/CMA/show_dashboard');
+    }
+    if($level == 'Provincial'){
+      redirect('/Provincial/show_dashboard');
+    }
+    if($level == 'National'){
+      redirect('/National/show_dashboard');
+    }
+    
   }
 }

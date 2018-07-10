@@ -12,7 +12,7 @@ class National extends CI_Controller{
     }
   }
 
-  function show_risk(){
+  function show_dashboard(){
     $user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
     $data['is_admin'] = $is_admin;
@@ -39,17 +39,17 @@ class National extends CI_Controller{
     $data = $this->get_infected_percentage_in_country($data["provinces"], $data);
     $data = $this->get_infected_from_every_province($data);
     $data = $this->get_infected_percentage_in_country_as_clientType_by_quater($data, '2017');
-    $data = $this->get_not_confirm_test_in_country($data["provinces"], $data,26);
-    $data = $this->get_not_enrollment_test_in_country($data["provinces"], $data,26);
-    $data = $this->get_not_avg_linkage_in_country($data["provinces"], $data,26);
-    $data = $this->get_not_confirm_test($data,33);
-    $data = $this->get_not_enroll_test($data,33);
-    $data = $this->get_duration_link_confirmed($data,33);
-    $data = $this->get_duration_link_enroll($data,33);
-    $data = $this->get_not_confirm_test_in_country_as_sex($data,33);
-    $data = $this->get_not_confirm_test_in_country_as_client_type($data,33);
-    $data = $this->get_not_enroll_test_in_country_as_sex($data,33);
-    $data = $this->get_not_enroll_test_in_country_as_client_type($data,33);
+    $data = $this->get_not_confirm_test_in_country($data["provinces"], $data,12);
+    $data = $this->get_not_enrollment_test_in_country($data["provinces"], $data,12);
+    $data = $this->get_not_avg_linkage_in_country($data["provinces"], $data,12);
+    $data = $this->get_not_confirm_test($data,12);
+    $data = $this->get_not_enroll_test($data,12);
+    $data = $this->get_duration_link_confirmed($data,12);
+    $data = $this->get_duration_link_enroll($data,12);
+    $data = $this->get_not_confirm_test_in_country_as_sex($data,12);
+    $data = $this->get_not_confirm_test_in_country_as_client_type($data,12);
+    $data = $this->get_not_enroll_test_in_country_as_sex($data,12);
+    $data = $this->get_not_enroll_test_in_country_as_client_type($data,12);
     // print_r($data);
     // exit;
     $this->load->view('National/dashboard',$data);
@@ -168,36 +168,6 @@ class National extends CI_Controller{
     return $data;
   }
 
-  function get_infected_percentage_in_od($province_name, $data){
-    $ods = $this->get_od_by_provinces($province_name);
-    foreach($ods as $od){
-      $client_types = $this->get_client_type();
-      $total_in_od = $this->get_tester_confirm_by_OD($province_name, $od["ODname"], "NOW() - INTERVAL 180 DAY", "NOW()");
-      $data["percentage_type_od"][$od["ODname"]] = array();
-      $tester_male = $this->get_tester_confirm_by_od_and_sex($province_name,$od["ODname"], "Male", "NOW() - INTERVAL 180 DAY", "NOW()");
-      $tester_female = $this->get_tester_confirm_by_od_and_sex($province_name,$od["ODname"], "Female", "NOW() - INTERVAL 180 DAY", "NOW()");
-      if($total_in_od[0]["total"] != 0 and count($tester_male)> 0 and count($tester_female) > 0){
-        $data["percentage_type_od"][$od["ODname"]]["percentage_male"] = ($tester_male[0]["total"] / $total_in_od[0]["total"]) * 100;
-        $data["percentage_type_od"][$od["ODname"]]["percentage_female"] = ($tester_female[0]["total"] / $total_in_od[0]["total"]) * 100;
-      }
-      else{
-        $data["percentage_type_od"][$od["ODname"]]["percentage_male"] = 0;
-        $data["percentage_type_od"][$od["ODname"]]["percentage_female"] = 0;
-      } 
-      foreach($client_types as $type){
-        $tester = $this->get_tester_confirm_by_od_and_clientType($province_name,$od["ODname"], $type["TypeClient"], "NOW() - INTERVAL 180 DAY", "NOW()");  
-
-        if($total_in_od[0]["total"] != 0 and count($tester) > 0){
-          $data["percentage_type_od"][$od["ODname"]][$type["TypeClient"]] = ($tester[0]["total"] / $total_in_od[0]["total"]) * 100;
-        }
-        else{
-          $data["percentage_type_od"][$od["ODname"]][$type["TypeClient"]] = 0;
-        } 
-      }
-    }
-    return $data;
-  }
-
   function get_infected_percentage_in_country($provinces, $data){
     foreach($provinces as $province){
       $province_name = $province["ProvinceEng"];
@@ -263,7 +233,7 @@ class National extends CI_Controller{
       $data["percentage_male"] = 0;
       $data["percentage_female"] = 0;
       $data["num_male"] = $tester_male[0]["total"];
-      $data["num_female"] = $tester_fmale[0]["total"];
+      $data["num_female"] = $tester_female[0]["total"];
     } 
     return $data;
   }
@@ -314,37 +284,7 @@ class National extends CI_Controller{
     return $data;
   }
 
-  function get_confirm_test_as_od($province_name, $data, $from_number_of_month){
-    $ods = $this->get_od_by_provinces($province_name);
-    $current_month = date('m');
-    $list_months = array_reverse($this->get_list_month($current_month, $from_number_of_month));
-    $data["list_months"] = $list_months;
-    foreach($ods as $od){
-      $current_year = $this->get_start_year($from_number_of_month);
-      $data["graph"][$od["ODname"]] = array();
-      $tmp_total = 0;
-      $total_mv_range = 0;
-      $mv_range = 0;
-      for($i=0; $i<$from_number_of_month; $i++){
-        $end_month_day = $this->day_in_month($current_year, $list_months[$i]);
-        $data["graph"][$od["ODname"]][$list_months[$i]]= $this->get_tester_confirm_by_OD($province_name, $od["ODname"], "'$current_year-$list_months[$i]-01'", "'$current_year-$list_months[$i]-$end_month_day'");
-        $tmp_total = $tmp_total + $data["graph"][$od["ODname"]][$list_months[$i]][0]["total"];
-        $total_mv_range = $total_mv_range + (abs($data["graph"][$od["ODname"]][$list_months[$i]][0]["total"] - $mv_range));
-        $mv_range = $data["graph"][$od["ODname"]][$list_months[$i]][0]["total"];
-        if($list_months[$i] ==  12)
-          $current_year = $current_year + 1;
-      }
-      $central_line = $tmp_total / $from_number_of_month;
-      $avg_moving_range = $total_mv_range /$from_number_of_month;
-      $data["graph"][$od["ODname"]]["central_line"] = $central_line;
-      $data["graph"][$od["ODname"]]["upper_line"] = $central_line + ($avg_moving_range * 2.66);
-      $data["graph"][$od["ODname"]]["lower_line"] = $central_line - ($avg_moving_range * 2.66);;
-    }
-    return $data;
-  }
-
   function get_confirm_test_as_province($province_name, $data, $from_number_of_month){
-    $ods = $this->get_od_by_provinces($province_name);
     $current_month = date('m');
     $current_year = $this->get_start_year($from_number_of_month);
     $list_months = array_reverse($this->get_list_month($current_month, $from_number_of_month));
@@ -405,12 +345,6 @@ class National extends CI_Controller{
   function get_provinces(){
     $this->load->database();
     $result = $this->db->query("select * from tblprovince");
-    return $result->result_array();
-  }
-
-  function get_od_by_provinces($province_name){
-    $this->load->database();
-    $result = $this->db->query("select ODname from tblcenter where Province='$province_name'");
     return $result->result_array();
   }
 
@@ -586,20 +520,7 @@ class National extends CI_Controller{
     return $result->result_array();
   }
 
-  function get_tester_confirm_by_OD_and_sex($province_name, $od_name, $sex, $from, $to){
-    $this->load->database();
-    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code INNER JOIN tblpersonal ON tblfirsttest.CaseID=tblpersonal.CaseID WHERE tblpersonal.Sex='$sex' AND tblcenter.ODname='$od_name' AND tblcenter.Province='$province_name' AND tblfirsttest.DatTest BETWEEN $from AND $to ";
-    $result = $this->db->query($query);
-    return $result->result_array();
-  }
 
-  function get_tester_confirm_by_OD($province_name, $od_name, $from, $to){
-    $this->load->database();
-    $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblcenter ON tblconfirm.Code=tblcenter.Code WHERE tblcenter.ODname='$od_name' AND tblcenter.Province='$province_name' AND tblfirsttest.DatTest BETWEEN $from AND $to;";
-    $result = $this->db->query($query);
-    // print_r($query);
-    return $result->result_array();
-  }
 
   function get_tester_confirm_by_province_and_sex($province_name, $sex, $from, $to){
     $this->load->database();
@@ -611,13 +532,6 @@ class National extends CI_Controller{
   function get_tester_confirm_by_country_and_sex($sex, $from, $to){
     $this->load->database();
     $query = "select count(*) as total from tblfirsttest INNER JOIN tblconfirm ON tblconfirm.CaseID=tblfirsttest.CaseID INNER JOIN tblpersonal ON tblfirsttest.CaseID=tblpersonal.CaseID WHERE tblpersonal.Sex='$sex' AND tblfirsttest.DatTest BETWEEN $from AND $to";
-    $result = $this->db->query($query);
-    return $result->result_array();
-  }
-
-  function get_list_ods($province_name){
-    $this->load->database();
-    $query = "select ODname from tblcenter where Province='$province_name'";
     $result = $this->db->query($query);
     return $result->result_array();
   }

@@ -12,7 +12,7 @@ class Provincial extends CI_Controller{
     }
   }
 
-  function show_risk(){
+  function show_dashboard(){
   	$user_id = $this->session->userdata('id');
     $is_admin = $this->session->userdata('isAdmin');
     $data['is_admin'] = $is_admin;
@@ -35,14 +35,14 @@ class Provincial extends CI_Controller{
     $data = $this->get_infected_percentage_as_clientType($data["province"], $data);
     $data = $this->get_infected_percentage_in_od($data["province"], $data);
     $data = $this->get_most_positives_from_hc($data["province"], $data);
-    $data = $this->get_not_confirm_test_as_province($data["province"], $data,3);
-    $data = $this->get_not_enroll_test_as_province($data["province"], $data,3);
-    $data = $this->get_duration_link_confirmed($data["province"], $data,3);
-    $data = $this->get_duration_link_enroll($data["province"], $data,3);
-    $data = $this->get_not_confirm_test_in_province_as_sex($data["province"], $data,33);
-    $data = $this->get_not_confirm_test_in_province_as_client_type($data["province"], $data,33);
-    $data = $this->get_not_enroll_test_in_province_as_sex($data["province"], $data,33);
-    $data = $this->get_not_enroll_test_in_province_as_client_type($data["province"], $data,33);
+    $data = $this->get_not_confirm_test_as_province($data["province"], $data,12);
+    $data = $this->get_not_enroll_test_as_province($data["province"], $data,12);
+    $data = $this->get_duration_link_confirmed($data["province"], $data,12);
+    $data = $this->get_duration_link_enroll($data["province"], $data,12);
+    $data = $this->get_not_confirm_test_in_province_as_sex($data["province"], $data,12);
+    $data = $this->get_not_confirm_test_in_province_as_client_type($data["province"], $data,12);
+    $data = $this->get_not_enroll_test_in_province_as_sex($data["province"], $data,12);
+    $data = $this->get_not_enroll_test_in_province_as_client_type($data["province"], $data,12);
     // print_r($data);
     // exit;
     $this->load->view('Provincial/risk',$data);
